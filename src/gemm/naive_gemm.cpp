@@ -9,7 +9,7 @@ void naive_gemm(float* A, float* B, float* C, int N){
             float sum = 0;
 
             for(int k = 0; k < N; k++){
-                sum += A[i*N + k] + B[k*N + j];
+                sum += A[i*N + k] * B[k*N + j];
             }
 
             C[i*N + j] = sum;
