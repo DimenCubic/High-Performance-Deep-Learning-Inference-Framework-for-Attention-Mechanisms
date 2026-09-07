@@ -1,0 +1,1 @@
+/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/gemm_test.dir/src/main.cpp.o CMakeFiles/gemm_test.dir/src/gemm/naive_gemm.cpp.o -o gemm_test
