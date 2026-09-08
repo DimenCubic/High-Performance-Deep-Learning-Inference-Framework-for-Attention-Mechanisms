@@ -30,7 +30,7 @@ elseif(OPT_LEVEL STREQUAL "O2")
 elseif(OPT_LEVEL STREQUAL "O3")
     add_compile_options(-O3)
 elseif(OPT_LEVEL STREQUAL "Ofast")
-    add_compile_options(-Ofast)
+    add_compile_options(-O3 -ffast-math)
 
 else()
     message(
