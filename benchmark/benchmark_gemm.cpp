@@ -45,9 +45,15 @@ int main(){
     double avg_time = total_time / runs;
 
 
+    // Add GFLOPS Cal at here.
+    double operations = 2 * N * N * N - N * N;
+    double gflops = operations / avg_time / 1e9;
+
+
 
     std::cout << "Matrix Size: " << N << " x " << N << std::endl;
     std::cout << "Average Execution time: " << avg_time * 1000 << " ms" << std::endl;
+    std::cout << "Performance: " << gflops << " GFLOPS" << std::endl;
 
     return 0;
 }
