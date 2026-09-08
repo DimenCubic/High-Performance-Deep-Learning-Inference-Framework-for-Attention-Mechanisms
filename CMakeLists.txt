@@ -58,6 +58,7 @@ add_executable(
 
     src/main.cpp
     src/gemm/naive_gemm.cpp
+    src/gemm/reordered_gemm.cpp
 )
 
 # For efficiency
