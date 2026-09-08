@@ -2,10 +2,17 @@
 #define GEMM_H
 
 void naive_gemm(
-    float* A,
-    float* B,
+    const float* A,
+    const float* B,
     float* C,
     int N     // N behaves Line number / Column Number
+);
+
+void reordered_gemm(
+    const float* A,
+    const float* B,
+    float* C,
+    int N
 );
 
 #endif

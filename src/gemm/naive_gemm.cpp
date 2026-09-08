@@ -1,6 +1,6 @@
 #include "gemm/gemm.h"
 
-void naive_gemm(float* A, float* B, float* C, int N){
+void naive_gemm(const float* A, const float* B, float* C, int N){
 
     for(int i = 0; i < N; i++){
 
