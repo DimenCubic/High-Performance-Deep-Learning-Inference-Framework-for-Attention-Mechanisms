@@ -24,7 +24,7 @@ int main(){
     naive_gemm(A.data(), B.data(), C.data(), N);
     double elapsed = timer.stop();
 
-    std::cout << "Matrix Size: " << N << " x" << N << std::endl;
+    std::cout << "Matrix Size: " << N << " x " << N << std::endl;
     std::cout << "Execution time: " << elapsed * 1000 << " ms" << std::endl;
 
     return 0;

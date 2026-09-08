@@ -129,12 +129,50 @@ gemm_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_test.dir/build.make CMakeFiles/gemm_test.dir/build
 .PHONY : gemm_test/fast
 
+#=============================================================================
+# Target rules for targets named gemm_benchmark
+
+# Build rule for target.
+gemm_benchmark: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gemm_benchmark
+.PHONY : gemm_benchmark
+
+# fast build rule for target.
+gemm_benchmark/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/build
+.PHONY : gemm_benchmark/fast
+
+benchmark/benchmark_gemm.o: benchmark/benchmark_gemm.cpp.o
+.PHONY : benchmark/benchmark_gemm.o
+
+# target to build an object file
+benchmark/benchmark_gemm.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/benchmark/benchmark_gemm.cpp.o
+.PHONY : benchmark/benchmark_gemm.cpp.o
+
+benchmark/benchmark_gemm.i: benchmark/benchmark_gemm.cpp.i
+.PHONY : benchmark/benchmark_gemm.i
+
+# target to preprocess a source file
+benchmark/benchmark_gemm.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/benchmark/benchmark_gemm.cpp.i
+.PHONY : benchmark/benchmark_gemm.cpp.i
+
+benchmark/benchmark_gemm.s: benchmark/benchmark_gemm.cpp.s
+.PHONY : benchmark/benchmark_gemm.s
+
+# target to generate assembly for a file
+benchmark/benchmark_gemm.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/benchmark/benchmark_gemm.cpp.s
+.PHONY : benchmark/benchmark_gemm.cpp.s
+
 src/gemm/naive_gemm.o: src/gemm/naive_gemm.cpp.o
 .PHONY : src/gemm/naive_gemm.o
 
 # target to build an object file
 src/gemm/naive_gemm.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_test.dir/build.make CMakeFiles/gemm_test.dir/src/gemm/naive_gemm.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/src/gemm/naive_gemm.cpp.o
 .PHONY : src/gemm/naive_gemm.cpp.o
 
 src/gemm/naive_gemm.i: src/gemm/naive_gemm.cpp.i
@@ -143,6 +181,7 @@ src/gemm/naive_gemm.i: src/gemm/naive_gemm.cpp.i
 # target to preprocess a source file
 src/gemm/naive_gemm.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_test.dir/build.make CMakeFiles/gemm_test.dir/src/gemm/naive_gemm.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/src/gemm/naive_gemm.cpp.i
 .PHONY : src/gemm/naive_gemm.cpp.i
 
 src/gemm/naive_gemm.s: src/gemm/naive_gemm.cpp.s
@@ -151,6 +190,7 @@ src/gemm/naive_gemm.s: src/gemm/naive_gemm.cpp.s
 # target to generate assembly for a file
 src/gemm/naive_gemm.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_test.dir/build.make CMakeFiles/gemm_test.dir/src/gemm/naive_gemm.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/src/gemm/naive_gemm.cpp.s
 .PHONY : src/gemm/naive_gemm.cpp.s
 
 src/main.o: src/main.cpp.o
@@ -177,6 +217,54 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_test.dir/build.make CMakeFiles/gemm_test.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/utils/matrix.o: src/utils/matrix.cpp.o
+.PHONY : src/utils/matrix.o
+
+# target to build an object file
+src/utils/matrix.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/src/utils/matrix.cpp.o
+.PHONY : src/utils/matrix.cpp.o
+
+src/utils/matrix.i: src/utils/matrix.cpp.i
+.PHONY : src/utils/matrix.i
+
+# target to preprocess a source file
+src/utils/matrix.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/src/utils/matrix.cpp.i
+.PHONY : src/utils/matrix.cpp.i
+
+src/utils/matrix.s: src/utils/matrix.cpp.s
+.PHONY : src/utils/matrix.s
+
+# target to generate assembly for a file
+src/utils/matrix.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/src/utils/matrix.cpp.s
+.PHONY : src/utils/matrix.cpp.s
+
+src/utils/timer.o: src/utils/timer.cpp.o
+.PHONY : src/utils/timer.o
+
+# target to build an object file
+src/utils/timer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/src/utils/timer.cpp.o
+.PHONY : src/utils/timer.cpp.o
+
+src/utils/timer.i: src/utils/timer.cpp.i
+.PHONY : src/utils/timer.i
+
+# target to preprocess a source file
+src/utils/timer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/src/utils/timer.cpp.i
+.PHONY : src/utils/timer.cpp.i
+
+src/utils/timer.s: src/utils/timer.cpp.s
+.PHONY : src/utils/timer.s
+
+# target to generate assembly for a file
+src/utils/timer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/src/utils/timer.cpp.s
+.PHONY : src/utils/timer.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -185,13 +273,23 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... gemm_benchmark"
 	@echo "... gemm_test"
+	@echo "... benchmark/benchmark_gemm.o"
+	@echo "... benchmark/benchmark_gemm.i"
+	@echo "... benchmark/benchmark_gemm.s"
 	@echo "... src/gemm/naive_gemm.o"
 	@echo "... src/gemm/naive_gemm.i"
 	@echo "... src/gemm/naive_gemm.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/utils/matrix.o"
+	@echo "... src/utils/matrix.i"
+	@echo "... src/utils/matrix.s"
+	@echo "... src/utils/timer.o"
+	@echo "... src/utils/timer.i"
+	@echo "... src/utils/timer.s"
 .PHONY : help
 
 
