@@ -18,14 +18,36 @@ int main(){
     fill_random(B.data(), matrix_size);
     fill_zero(C.data(), matrix_size);
 
-    
+
+/*
     Timer timer;
     timer.start();
     naive_gemm(A.data(), B.data(), C.data(), N);
     double elapsed = timer.stop();
+*/
+
+    // Wrap average version
+    const int runs = 5;
+    double total_time = 0.0;
+
+    for(int i = 0; i < runs; i++){
+        fill_zero(C.data(), matrix_size);
+
+        Timer timer;
+        timer.start();
+
+        naive_gemm(A.data(), B.data(), C.data(), N);
+        double  elapsed = timer.stop();
+        total_time += elapsed;
+
+    }
+
+    double avg_time = total_time / runs;
+
+
 
     std::cout << "Matrix Size: " << N << " x " << N << std::endl;
-    std::cout << "Execution time: " << elapsed * 1000 << " ms" << std::endl;
+    std::cout << "Average Execution time: " << avg_time * 1000 << " ms" << std::endl;
 
     return 0;
 }
