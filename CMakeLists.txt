@@ -57,6 +57,7 @@ add_executable(
     gemm_test
 
     src/main.cpp
+
     src/gemm/naive_gemm.cpp
     src/gemm/reordered_gemm.cpp
 )
@@ -67,6 +68,8 @@ add_executable(
 
     benchmark/benchmark_gemm.cpp
     src/gemm/naive_gemm.cpp
+    src/gemm/reordered_gemm.cpp
+    
     src/utils/matrix.cpp
     src/utils/timer.cpp
 )
