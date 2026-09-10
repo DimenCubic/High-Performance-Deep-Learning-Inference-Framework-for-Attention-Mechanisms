@@ -22,4 +22,11 @@ void unrolled_gemm(
     int N
 );
 
+void blocked_gemm(
+    const float* A,
+    const float* B,
+    float* C,
+    int N
+);
+
 #endif

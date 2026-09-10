@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/gemm_test.dir/src/gemm/blocked_gemm.cpp.o"
+  "CMakeFiles/gemm_test.dir/src/gemm/blocked_gemm.cpp.o.d"
   "CMakeFiles/gemm_test.dir/src/gemm/naive_gemm.cpp.o"
   "CMakeFiles/gemm_test.dir/src/gemm/naive_gemm.cpp.o.d"
   "CMakeFiles/gemm_test.dir/src/gemm/reordered_gemm.cpp.o"

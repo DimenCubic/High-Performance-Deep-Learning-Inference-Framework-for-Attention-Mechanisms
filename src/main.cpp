@@ -3,7 +3,7 @@
 #include "utils/matrix.h"
 
 int main(){
-    int N = 7;
+    int N = 70;
     int size = N*N;
 
     float A[size];
@@ -19,7 +19,8 @@ int main(){
         
         naive_gemm(A, B, C_base, N);
         //reordered_gemm(A, B, C_test, N);
-        unrolled_gemm(A, B, C_test, N);
+        //unrolled_gemm(A, B, C_test, N);
+        blocked_gemm(A, B, C_test, N);
 
         /*for(int i = 0; i < N; i++){
             for(int j = 0; j < N; j++){

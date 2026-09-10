@@ -609,3 +609,28 @@ Interpretation
 - The runtime, GFLOPS, and cycle measurements all consistently show that loop unrolling provides a meaningful additional optimization over the reordered GEMM.
 
 - The profiling results also demonstrate an important performance-engineering principle: after one bottleneck is reduced, another bottleneck may become dominant.
+
+
+
+
+## Blocked GEMM
+
+### Runtime (ms)
+
+| Matrix Size | O0 | O1 | O2 | O3 | Ofast |
+|---|---:|---:|---:|---:|---:|
+| 128 | | | | | |
+| 256 | | | | | |
+| 512 | | | | | |
+| 1024 | | | | | |
+| 2048 | | | | | |
+
+### Performance (GFLOPS)
+
+| Matrix Size | O0 | O1 | O2 | O3 | Ofast |
+|---|---:|---:|---:|---:|---:|
+| 128 | | | | | |
+| 256 | | | | | |
+| 512 | | | | | |
+| 1024 | | | | | |
+| 2048 | | | | | |
