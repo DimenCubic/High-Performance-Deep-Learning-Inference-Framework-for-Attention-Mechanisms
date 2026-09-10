@@ -2,7 +2,7 @@
 #include <algorithm>
 
 void blocked_gemm(const float* A, const float* B, float* C, int N){
-    const int BLOCK_SIZE = 64;
+    const int BLOCK_SIZE = 128;
 
 
     // ii, jj will determine which block to be execute, basically, we just change thread from 1 to N to the small 64 thread once time.

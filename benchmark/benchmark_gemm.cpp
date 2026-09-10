@@ -6,7 +6,7 @@
 #include "utils/timer.h"
 
 int main(){
-    int N = 512;
+    int N = 2048;
 
     int matrix_size = N * N;
 
@@ -50,7 +50,7 @@ int main(){
 
 
     // Add GFLOPS Cal at here.
-    double operations = 2 * N * N * N - N * N;
+    double operations = 2.0 * N * N * N - 1.0 * N * N;
     double gflops = operations / avg_time / 1e9;
 
 
