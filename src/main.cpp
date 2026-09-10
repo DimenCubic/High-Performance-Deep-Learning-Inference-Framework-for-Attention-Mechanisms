@@ -18,7 +18,8 @@ int main(){
         fill_zero(C_test, size);
         
         naive_gemm(A, B, C_base, N);
-        reordered_gemm(A, B, C_test, N);
+        //reordered_gemm(A, B, C_test, N);
+        unrolled_gemm(A, B, C_test, N);
 
         /*for(int i = 0; i < N; i++){
             for(int j = 0; j < N; j++){
@@ -28,7 +29,7 @@ int main(){
             std::cout<<std::endl;
         }*/
 
-        std::cout<<std::boolalpha<<compare_matrices(C_base, C_test, N*N, 1e-4)<<std::endl;
+        std::cout<<std::boolalpha<<compare_matrices(C_base, C_test, size, 1e-4)<<std::endl;
 
     }
 

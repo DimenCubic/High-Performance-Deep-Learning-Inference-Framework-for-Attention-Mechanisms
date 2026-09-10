@@ -114,10 +114,24 @@ CMakeFiles/gemm_benchmark.dir/src/gemm/reordered_gemm.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/gemm_benchmark.dir/src/gemm/reordered_gemm.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/Users/chenzhehang/Desktop/Nvidia Intern/High-Performance-Deep-Learning-Inference-Framework-for-Attention-Mechanisms/src/gemm/reordered_gemm.cpp" -o CMakeFiles/gemm_benchmark.dir/src/gemm/reordered_gemm.cpp.s
 
+CMakeFiles/gemm_benchmark.dir/src/gemm/unrolled_gemm.cpp.o: CMakeFiles/gemm_benchmark.dir/flags.make
+CMakeFiles/gemm_benchmark.dir/src/gemm/unrolled_gemm.cpp.o: src/gemm/unrolled_gemm.cpp
+CMakeFiles/gemm_benchmark.dir/src/gemm/unrolled_gemm.cpp.o: CMakeFiles/gemm_benchmark.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/chenzhehang/Desktop/Nvidia Intern/High-Performance-Deep-Learning-Inference-Framework-for-Attention-Mechanisms/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/gemm_benchmark.dir/src/gemm/unrolled_gemm.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/gemm_benchmark.dir/src/gemm/unrolled_gemm.cpp.o -MF CMakeFiles/gemm_benchmark.dir/src/gemm/unrolled_gemm.cpp.o.d -o CMakeFiles/gemm_benchmark.dir/src/gemm/unrolled_gemm.cpp.o -c "/Users/chenzhehang/Desktop/Nvidia Intern/High-Performance-Deep-Learning-Inference-Framework-for-Attention-Mechanisms/src/gemm/unrolled_gemm.cpp"
+
+CMakeFiles/gemm_benchmark.dir/src/gemm/unrolled_gemm.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/gemm_benchmark.dir/src/gemm/unrolled_gemm.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/Users/chenzhehang/Desktop/Nvidia Intern/High-Performance-Deep-Learning-Inference-Framework-for-Attention-Mechanisms/src/gemm/unrolled_gemm.cpp" > CMakeFiles/gemm_benchmark.dir/src/gemm/unrolled_gemm.cpp.i
+
+CMakeFiles/gemm_benchmark.dir/src/gemm/unrolled_gemm.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/gemm_benchmark.dir/src/gemm/unrolled_gemm.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/Users/chenzhehang/Desktop/Nvidia Intern/High-Performance-Deep-Learning-Inference-Framework-for-Attention-Mechanisms/src/gemm/unrolled_gemm.cpp" -o CMakeFiles/gemm_benchmark.dir/src/gemm/unrolled_gemm.cpp.s
+
 CMakeFiles/gemm_benchmark.dir/src/utils/matrix.cpp.o: CMakeFiles/gemm_benchmark.dir/flags.make
 CMakeFiles/gemm_benchmark.dir/src/utils/matrix.cpp.o: src/utils/matrix.cpp
 CMakeFiles/gemm_benchmark.dir/src/utils/matrix.cpp.o: CMakeFiles/gemm_benchmark.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/chenzhehang/Desktop/Nvidia Intern/High-Performance-Deep-Learning-Inference-Framework-for-Attention-Mechanisms/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/gemm_benchmark.dir/src/utils/matrix.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/chenzhehang/Desktop/Nvidia Intern/High-Performance-Deep-Learning-Inference-Framework-for-Attention-Mechanisms/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/gemm_benchmark.dir/src/utils/matrix.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/gemm_benchmark.dir/src/utils/matrix.cpp.o -MF CMakeFiles/gemm_benchmark.dir/src/utils/matrix.cpp.o.d -o CMakeFiles/gemm_benchmark.dir/src/utils/matrix.cpp.o -c "/Users/chenzhehang/Desktop/Nvidia Intern/High-Performance-Deep-Learning-Inference-Framework-for-Attention-Mechanisms/src/utils/matrix.cpp"
 
 CMakeFiles/gemm_benchmark.dir/src/utils/matrix.cpp.i: cmake_force
@@ -131,7 +145,7 @@ CMakeFiles/gemm_benchmark.dir/src/utils/matrix.cpp.s: cmake_force
 CMakeFiles/gemm_benchmark.dir/src/utils/timer.cpp.o: CMakeFiles/gemm_benchmark.dir/flags.make
 CMakeFiles/gemm_benchmark.dir/src/utils/timer.cpp.o: src/utils/timer.cpp
 CMakeFiles/gemm_benchmark.dir/src/utils/timer.cpp.o: CMakeFiles/gemm_benchmark.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/chenzhehang/Desktop/Nvidia Intern/High-Performance-Deep-Learning-Inference-Framework-for-Attention-Mechanisms/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/gemm_benchmark.dir/src/utils/timer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/chenzhehang/Desktop/Nvidia Intern/High-Performance-Deep-Learning-Inference-Framework-for-Attention-Mechanisms/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/gemm_benchmark.dir/src/utils/timer.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/gemm_benchmark.dir/src/utils/timer.cpp.o -MF CMakeFiles/gemm_benchmark.dir/src/utils/timer.cpp.o.d -o CMakeFiles/gemm_benchmark.dir/src/utils/timer.cpp.o -c "/Users/chenzhehang/Desktop/Nvidia Intern/High-Performance-Deep-Learning-Inference-Framework-for-Attention-Mechanisms/src/utils/timer.cpp"
 
 CMakeFiles/gemm_benchmark.dir/src/utils/timer.cpp.i: cmake_force
@@ -147,6 +161,7 @@ gemm_benchmark_OBJECTS = \
 "CMakeFiles/gemm_benchmark.dir/benchmark/benchmark_gemm.cpp.o" \
 "CMakeFiles/gemm_benchmark.dir/src/gemm/naive_gemm.cpp.o" \
 "CMakeFiles/gemm_benchmark.dir/src/gemm/reordered_gemm.cpp.o" \
+"CMakeFiles/gemm_benchmark.dir/src/gemm/unrolled_gemm.cpp.o" \
 "CMakeFiles/gemm_benchmark.dir/src/utils/matrix.cpp.o" \
 "CMakeFiles/gemm_benchmark.dir/src/utils/timer.cpp.o"
 
@@ -156,11 +171,12 @@ gemm_benchmark_EXTERNAL_OBJECTS =
 gemm_benchmark: CMakeFiles/gemm_benchmark.dir/benchmark/benchmark_gemm.cpp.o
 gemm_benchmark: CMakeFiles/gemm_benchmark.dir/src/gemm/naive_gemm.cpp.o
 gemm_benchmark: CMakeFiles/gemm_benchmark.dir/src/gemm/reordered_gemm.cpp.o
+gemm_benchmark: CMakeFiles/gemm_benchmark.dir/src/gemm/unrolled_gemm.cpp.o
 gemm_benchmark: CMakeFiles/gemm_benchmark.dir/src/utils/matrix.cpp.o
 gemm_benchmark: CMakeFiles/gemm_benchmark.dir/src/utils/timer.cpp.o
 gemm_benchmark: CMakeFiles/gemm_benchmark.dir/build.make
 gemm_benchmark: CMakeFiles/gemm_benchmark.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/Users/chenzhehang/Desktop/Nvidia Intern/High-Performance-Deep-Learning-Inference-Framework-for-Attention-Mechanisms/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable gemm_benchmark"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/Users/chenzhehang/Desktop/Nvidia Intern/High-Performance-Deep-Learning-Inference-Framework-for-Attention-Mechanisms/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable gemm_benchmark"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/gemm_benchmark.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

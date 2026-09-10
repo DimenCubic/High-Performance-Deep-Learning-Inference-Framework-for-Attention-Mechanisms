@@ -37,7 +37,8 @@ int main(){
         timer.start();
 
         //naive_gemm(A.data(), B.data(), C.data(), N);
-        reordered_gemm(A.data(), B.data(), C.data(), N);
+        //reordered_gemm(A.data(), B.data(), C.data(), N);
+        unrolled_gemm(A.data(), B.data(), C.data(), N);
 
         double  elapsed = timer.stop();
         total_time += elapsed;

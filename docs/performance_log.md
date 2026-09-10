@@ -407,3 +407,205 @@ Complier:
 - This experiment demonstrates that high-performance computing is not only about reducing the number of arithmetic operations, but also about organizing computation to match the underlying hardware architecture and memory hierarchy.
  
 
+## Unrolled GEMM
+
+### Runtime (ms)
+
+| Matrix Size | O0 | O1 | O2 | O3 | Ofast |
+|---|---:|---:|---:|---:|---:|
+| 128 |4.60724 | 1.83141| 0.5471|0.162133 | 0.523142|
+| 256 | 25.7109| 5.97956| 1.23694|1.31199 | 2.54524|
+| 512 | 143.203| 28.9182|10.8994 |9.82059 |10.1542 |
+| 1024 |1141.02 | 226.281| 80.9152|76.5122| 77.7861|
+
+### Performance (GFLOPS)
+
+| Matrix Size | O0 | O1 | O2 | O3 | Ofast |
+|---|---:|---:|---:|---:|---:|
+| 128 | 0.906816| 2.28126| 7.63648| 25.7684| 7.98621|
+| 256 |1.30252 |5.60056 | 27.0739|25.5252 |13.1575 |
+| 512 |1.87268 | 9.27351| 24.6045|27.3072 | 26.41|
+| 1024 |1.88116 |9.4857 | 26.527| 28.0535| 27.5941|
+
+### Profiling Data
+
+**Profiler:** Apple Instruments CPU Profiler  
+**Program:** `gemm_benchmark`  
+**Kernel:** `unrolled_gemm`  
+**Compiler Optimization:** `O0`  
+**Matrix Size:** `512 × 512`  
+**Thermal State:** Nominal  
+
+#### CPU Profiling
+
+- **Total Cycles:** ~2.43 G
+- **`unrolled_gemm` Cycles:** ~2.38 G
+- **`unrolled_gemm` Cycle Share:** ~97.9%
+
+#### CPU Bottleneck Analysis
+
+| Metric | Average |
+|---|---:|
+| Instruction Processing Bottleneck | 0.60% |
+| Useful | ~0% |
+| Instruction Delivery Bottleneck | 58.95% |
+| Discarded Bottleneck | 40.45% |
+
+#### L1D Cache Analysis
+
+| Metric | Value |
+|---|---:|
+| Load Micro-operations (Speculative) | 6,944,177,325 |
+| L1D Load Misses (Speculative) | 12,672,860 |
+| L1D Load Miss Rate | ~0.18% |
+| Store Micro-operations (Speculative) | 932,981,022 |
+| L1D Store Misses (Speculative) | 37,651,983 |
+| L1D Store Miss Rate | ~4.04% |
+| L1D Cache Writebacks (Speculative) | 470,824 |
+| Cycles | 2,463,054,246 |
+
+
+
+---
+
+## Reordered GEMM vs Unrolled GEMM
+
+### Profiling Comparison (O0, N = 512)
+
+| Metric | Reordered GEMM | Unrolled GEMM | Change |
+|---|---:|---:|---:|
+| Runtime (ms) | 221.178 | 143.203 | ~35.25% lower |
+| Performance (GFLOPS) | 1.21248 | 1.87268 | ~54.45% higher |
+| Speedup | 1.00× | ~1.54× | ~1.54× |
+| Total Cycles | ~3.34 G | ~2.43 G | ~27.25% lower |
+| Kernel Cycles | ~3.29 G | ~2.38 G | ~27.66% lower |
+| Kernel Cycle Share | ~98.5% | ~97.9% | Slightly lower |
+| Useful | 67.50% | Not reported* | Different bottleneck classification |
+| Instruction Processing Bottleneck | 30.89% | 0.60% | -30.29 percentage points |
+| Instruction Delivery Bottleneck | 1.51% | 58.95% | +57.44 percentage points |
+| Discarded Bottleneck | 13.65% | 40.45% | +26.80 percentage points |
+| L1D Load Miss Rate | ~0.14% | ~0.18% | Slightly higher |
+| L1D Store Miss Rate | ~2.64% | ~4.04% | Higher |
+| L1D Cache Writebacks | 416,954 | 470,824 | Slightly higher |
+
+\* `Useful` was not reported with a visible value in this profiling run.
+
+
+### Analysis
+
+#### 1. `Runtime and GFLOPS`
+
+Observation
+
+- Runtime decreases from 221.178 ms to 143.203 ms.
+- This represents approximately a 35.25% reduction in runtime.
+- Performance increases from 1.21248 GFLOPS to 1.87268 GFLOPS.
+- This represents approximately a 54.45% increase in GFLOPS.
+- The unrolled implementation achieves approximately a 1.54× speedup over the reordered implementation.
+
+Interpretation
+
+- The theoretical amount of matrix multiplication computation remains approximately unchanged, so the performance improvement does not come from reducing the `O(N^3)` computational complexity.
+
+- Instead, loop unrolling allows the CPU to execute the same workload more efficiently.
+
+- The reduced runtime and higher GFLOPS show that manual loop unrolling provides an additional performance improvement after the memory-access pattern has already been optimized by loop reordering.
+
+- Since the L1D cache miss rate changes only slightly, the additional speedup is more strongly associated with reduced loop-control overhead and improved instruction-level parallelism than with cache-locality improvements.
+
+
+---
+
+#### 2. `CPU Cycles`
+
+Observation
+
+- Total CPU cycles decrease from approximately 3.34 G to 2.43 G.
+- `unrolled_gemm` requires about 27% fewer CPU cycles than `reordered_gemm`.
+- The theoretical GEMM computation remains approximately unchanged.
+
+Interpretation
+
+- Loop unrolling reduces the amount of loop-control overhead such as loop counter updates, comparisons, and branches.
+
+- By processing multiple `j` elements in one loop iteration, the CPU performs more arithmetic work for each loop-control sequence.
+
+- The reduction in cycles indicates that manual loop unrolling improves the efficiency of the reordered GEMM even without changing the `O(N^3)` computational complexity.
+
+- Loop unrolling can also expose more independent operations to the CPU, increasing the available instruction-level parallelism.
+
+
+---
+
+#### 3. `Instruction Processing`
+
+Observation
+
+- The Instruction Processing Bottleneck decreases significantly from 30.89% to only 0.60%.
+- However, the Instruction Delivery Bottleneck increases from 1.51% to 58.95%.
+- The Discarded Bottleneck also increases from 13.65% to 40.45%.
+
+Interpretation
+
+- The very low Instruction Processing Bottleneck suggests that backend execution is no longer the main limitation in the unrolled implementation.
+
+- Loop unrolling exposes multiple independent operations at the same time, which can reduce execution dependencies and allow the backend to process instructions more efficiently.
+
+- However, unrolling increases the amount of machine code inside the loop body.
+
+- A larger loop body may place more pressure on instruction delivery, instruction cache, decoding, and branch/speculative execution mechanisms.
+
+- The bottleneck therefore appears to shift from backend instruction processing toward instruction delivery and discarded speculative work.
+
+- This shows that optimization can move the performance bottleneck rather than completely remove it.
+
+
+---
+
+#### 4. `L1D Cache`
+
+Observation
+
+- The L1D load miss rate changes only slightly from approximately 0.14% to 0.18%.
+- The L1D store miss rate increases from approximately 2.64% to 4.04%.
+- L1D cache writebacks increase slightly from 416,954 to 470,824.
+- The large cache improvement achieved by loop reordering is mostly preserved.
+
+Interpretation
+
+- Loop unrolling is not primarily a cache-locality optimization.
+
+- Both `reordered_gemm` and `unrolled_gemm` still access matrix B sequentially along the innermost `j` loop.
+
+- Therefore, the spatial locality introduced by loop reordering remains largely unchanged.
+
+- The small increase in cache miss rates suggests that the main benefit of loop unrolling does not come from reducing L1D cache misses.
+
+- Instead, the performance improvement mainly comes from reducing loop overhead and increasing instruction-level parallelism.
+
+
+---
+
+#### 5. `Overall Conclusion`
+
+Observation
+
+- Runtime decreases by approximately 35.25%.
+- GFLOPS increases by approximately 54.45%.
+- The unrolled implementation achieves approximately a 1.54× speedup.
+- Loop unrolling reduces total CPU cycles by approximately 27%.
+- The Instruction Processing Bottleneck decreases from 30.89% to 0.60%.
+- L1D load miss rate remains very low and changes only slightly.
+- The dominant bottleneck shifts toward Instruction Delivery and Discarded Bottleneck.
+
+Interpretation
+
+- Loop reordering mainly optimized memory locality, while loop unrolling mainly improves instruction execution efficiency.
+
+- The unrolled implementation performs the same mathematical work but exposes more independent operations and reduces loop-control overhead.
+
+- Since cache behavior changes only slightly, the additional performance improvement is mainly caused by instruction-level optimization rather than memory-locality improvement.
+
+- The runtime, GFLOPS, and cycle measurements all consistently show that loop unrolling provides a meaningful additional optimization over the reordered GEMM.
+
+- The profiling results also demonstrate an important performance-engineering principle: after one bottleneck is reduced, another bottleneck may become dominant.

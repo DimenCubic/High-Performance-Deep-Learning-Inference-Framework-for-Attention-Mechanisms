@@ -61,6 +61,7 @@ add_executable(
 
     src/gemm/naive_gemm.cpp
     src/gemm/reordered_gemm.cpp
+    src/gemm/unrolled_gemm.cpp
 )
 
 # For efficiency
@@ -70,6 +71,7 @@ add_executable(
     benchmark/benchmark_gemm.cpp
     src/gemm/naive_gemm.cpp
     src/gemm/reordered_gemm.cpp
+    src/gemm/unrolled_gemm.cpp
     
     src/utils/matrix.cpp
     src/utils/timer.cpp
