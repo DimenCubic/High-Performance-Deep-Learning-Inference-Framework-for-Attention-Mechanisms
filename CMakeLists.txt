@@ -57,6 +57,7 @@ add_executable(
     gemm_test
 
     src/main.cpp
+    src/utils/matrix.cpp
 
     src/gemm/naive_gemm.cpp
     src/gemm/reordered_gemm.cpp

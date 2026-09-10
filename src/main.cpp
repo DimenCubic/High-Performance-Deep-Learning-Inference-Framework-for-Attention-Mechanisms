@@ -1,29 +1,38 @@
 #include <iostream>
 #include "gemm/gemm.h"
+#include "utils/matrix.h"
 
 int main(){
-    int N = 4;
+    int N = 7;
+    int size = N*N;
+
+    float A[size];
+    float B[size];
+    float C_base[size];
+    float C_test[size];
+
+    for(int i = 0; i < 5; i++){
+        fill_random(A, size);
+        fill_random(B, size);
+        fill_zero(C_base, size);
+        fill_zero(C_test, size);
+        
+        naive_gemm(A, B, C_base, N);
+        reordered_gemm(A, B, C_test, N);
+
+        /*for(int i = 0; i < N; i++){
+            for(int j = 0; j < N; j++){
+                std::cout << C[i*N + j] << " ";
+            }
+
+            std::cout<<std::endl;
+        }*/
+
+        std::cout<<std::boolalpha<<compare_matrices(C_base, C_test, N*N, 1e-4)<<std::endl;
+
+    }
+
     
-    float A[16];
-    float B[16];
-    float C[16];
-
-    for(int i = 0; i < 16; i++){
-        A[i] = 1.0;
-        B[i] = 3.0;
-        C[i] = 0;
-    }
-
-    //naive_gemm(A, B, C, N);
-    reordered_gemm(A, B, C, N);
-
-    for(int i = 0; i < N; i++){
-        for(int j = 0; j < N; j++){
-            std::cout << C[i*N + j] << " ";
-        }
-
-        std::cout<<std::endl;
-    }
 
     return 0;
 }
