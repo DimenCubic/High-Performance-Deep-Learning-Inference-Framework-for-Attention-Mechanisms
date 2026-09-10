@@ -15,4 +15,11 @@ void reordered_gemm(
     int N
 );
 
+void unrolled_gemm(
+    const float* A,
+    const float* B,
+    float* C,
+    int N
+);
+
 #endif
