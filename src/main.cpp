@@ -21,7 +21,8 @@ int main(){
         //reordered_gemm(A, B, C_test, N);
         //unrolled_gemm(A, B, C_test, N);
         //blocked_gemm(A, B, C_test, N);
-        blocked2_gemm(A,B,C_test, N);
+        //blocked2_gemm(A,B,C_test, N);
+        simd_gemm(A, B, C_test, N);
 
         /*for(int i = 0; i < N; i++){
             for(int j = 0; j < N; j++){

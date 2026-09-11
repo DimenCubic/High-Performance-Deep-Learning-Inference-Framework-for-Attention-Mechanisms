@@ -811,3 +811,27 @@ Interpretation
 - Therefore, the current experiment shows that a theoretically reasonable optimization can reduce real performance if it is not well matched to the target architecture.
 
 - Performance optimization must always be validated through benchmarking and profiling rather than assumed to be beneficial.
+
+
+
+
+## Blocked GEMM
+
+
+### Runtime (ms) [128 Block Size]
+
+| Matrix Size | O0 | O1 | O2 | O3 | Ofast |
+|---|---:|---:|---:|---:|---:|
+| 128         |  8.05926  | 0.396758   |   0.199742 |  0.170192  |   0.166725    |
+| 256         |  31.405  |  2.21145  |  1.78384  |  2.65262  |    1.84924   |
+| 512         | 213.33   |  16.7957  |  14.1433  |   14.3025 |  13.7627     |
+| 1024        |   1699.35 |  102.391  |   104.592 |  106.049  | 112.62      |
+
+### Performance (GFLOPS) [128 Block Size]
+
+| Matrix Size | O0 | O1 | O2 | O3 | Ofast |
+|---|---:|---:|---:|---:|---:|
+| 128         |  0.5184  |  10.5301  |  20.9166  |  24.5438  |   25.0588    |
+| 256         |  1.06635  |   15.1434 |  18.7735  |  12.6249  |    18.1095   |
+| 512         |  1.25708  | 15.9668   | 18.9612   |  18.7502  |   19.4855    |
+| 1024        |  1.26309  |  20.9632  |   20.5219 |   20.24 |   19.0591    |

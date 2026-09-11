@@ -274,6 +274,33 @@ src/gemm/reordered_gemm.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/src/gemm/reordered_gemm.cpp.s
 .PHONY : src/gemm/reordered_gemm.cpp.s
 
+src/gemm/simd_gemm.o: src/gemm/simd_gemm.cpp.o
+.PHONY : src/gemm/simd_gemm.o
+
+# target to build an object file
+src/gemm/simd_gemm.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_test.dir/build.make CMakeFiles/gemm_test.dir/src/gemm/simd_gemm.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/src/gemm/simd_gemm.cpp.o
+.PHONY : src/gemm/simd_gemm.cpp.o
+
+src/gemm/simd_gemm.i: src/gemm/simd_gemm.cpp.i
+.PHONY : src/gemm/simd_gemm.i
+
+# target to preprocess a source file
+src/gemm/simd_gemm.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_test.dir/build.make CMakeFiles/gemm_test.dir/src/gemm/simd_gemm.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/src/gemm/simd_gemm.cpp.i
+.PHONY : src/gemm/simd_gemm.cpp.i
+
+src/gemm/simd_gemm.s: src/gemm/simd_gemm.cpp.s
+.PHONY : src/gemm/simd_gemm.s
+
+# target to generate assembly for a file
+src/gemm/simd_gemm.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_test.dir/build.make CMakeFiles/gemm_test.dir/src/gemm/simd_gemm.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/src/gemm/simd_gemm.cpp.s
+.PHONY : src/gemm/simd_gemm.cpp.s
+
 src/gemm/unrolled_gemm.o: src/gemm/unrolled_gemm.cpp.o
 .PHONY : src/gemm/unrolled_gemm.o
 
@@ -401,6 +428,9 @@ help:
 	@echo "... src/gemm/reordered_gemm.o"
 	@echo "... src/gemm/reordered_gemm.i"
 	@echo "... src/gemm/reordered_gemm.s"
+	@echo "... src/gemm/simd_gemm.o"
+	@echo "... src/gemm/simd_gemm.i"
+	@echo "... src/gemm/simd_gemm.s"
 	@echo "... src/gemm/unrolled_gemm.o"
 	@echo "... src/gemm/unrolled_gemm.i"
 	@echo "... src/gemm/unrolled_gemm.s"
