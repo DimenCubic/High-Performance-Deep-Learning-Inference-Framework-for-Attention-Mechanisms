@@ -256,7 +256,7 @@ Complier:
 **Kernel:** `reordered_gemm`  
 **Compiler Optimization:** `O0`  
 **Matrix Size:** `512 × 512`  
-**Thermal State:** Nominal  
+**Thermal State:** Nominal  N
 
 #### CPU Profiling
 
@@ -815,10 +815,10 @@ Interpretation
 
 
 
-## Blocked GEMM
+## SIMD GEMM
 
 
-### Runtime (ms) [128 Block Size]
+### Runtime (ms) 
 
 | Matrix Size | O0 | O1 | O2 | O3 | Ofast |
 |---|---:|---:|---:|---:|---:|
@@ -827,7 +827,7 @@ Interpretation
 | 512         | 213.33   |  16.7957  |  14.1433  |   14.3025 |  13.7627     |
 | 1024        |   1699.35 |  102.391  |   104.592 |  106.049  | 112.62      |
 
-### Performance (GFLOPS) [128 Block Size]
+### Performance (GFLOPS) 
 
 | Matrix Size | O0 | O1 | O2 | O3 | Ofast |
 |---|---:|---:|---:|---:|---:|
@@ -835,3 +835,177 @@ Interpretation
 | 256         |  1.06635  |   15.1434 |  18.7735  |  12.6249  |    18.1095   |
 | 512         |  1.25708  | 15.9668   | 18.9612   |  18.7502  |   19.4855    |
 | 1024        |  1.26309  |  20.9632  |   20.5219 |   20.24 |   19.0591    |
+
+
+
+## Reordered GEMM vs SIMD GEMM
+
+### Profiling Comparison (O0, N = 512)
+
+| Metric | Reordered GEMM | SIMD GEMM | Change |
+|---|---:|---:|---:|
+| Runtime (ms) | 221.178 | 213.330 | ~3.55% lower |
+| Performance (GFLOPS) | 1.21248 | 1.25708 | ~3.68% higher |
+| Speedup | 1.00× | ~1.04× | ~1.04× |
+| CPU Profiler Total Cycles | ~3.34 G | ~3.63 G | Higher |
+| Kernel Cycles | ~3.29 G | ~3.58 G | Higher |
+| Kernel Cycle Share | ~98.5% | ~98.6% | Similar |
+| Useful | 67.50% | 41.93% | -25.57 percentage points |
+| Instruction Processing Bottleneck | 30.89% | 56.60% | +25.71 percentage points |
+| Instruction Delivery Bottleneck | 1.51% | 1.31% | Similar |
+| Discarded Bottleneck | 13.65% | 4.06% | Lower |
+| Load Micro-operations (Speculative) | 9,557,579,644 | 3,321,459,935 | ~65.25% lower |
+| L1D Load Misses (Speculative) | 13,035,158 | 2,079,366,535 | Much higher |
+| L1D Load-Miss / Load-µop Ratio | ~0.14% | ~62.61% | Much higher |
+| Store Micro-operations (Speculative) | 1,433,554,798 | 8,587,952,123 | Much higher |
+| L1D Store Misses (Speculative) | 37,905,054 | 5,716,605 | Much lower |
+| L1D Store-Miss / Store-µop Ratio | ~2.64% | ~0.067% | Much lower |
+
+
+### Analysis
+
+#### 1. `Runtime and GFLOPS`
+
+Observation
+
+- Runtime decreases from 221.178 ms to 213.330 ms.
+- Performance increases from 1.21248 GFLOPS to 1.25708 GFLOPS.
+- The SIMD implementation achieves approximately a 1.04× speedup.
+- The measured improvement is much smaller than the theoretical 4-element SIMD width.
+
+Interpretation
+
+- ARM NEON allows one 128-bit vector instruction to process four `float` values at the same time.
+
+- However, processing four values per vector instruction does not mean the whole GEMM becomes four times faster.
+
+- SIMD only accelerates part of the execution. Memory loads, stores, address calculations, loop control, and other instructions still consume execution resources.
+
+- The small performance improvement suggests that the current SIMD implementation is limited by factors other than scalar floating-point arithmetic alone.
+
+
+---
+
+#### 2. `SIMD and Data-Level Parallelism`
+
+Observation
+
+- The SIMD implementation explicitly processes four adjacent `B` and `C` elements in each vector iteration.
+- Load micro-operations decrease significantly compared with the reordered scalar implementation.
+- Runtime still improves slightly even under `O0`.
+
+Interpretation
+
+- Unlike loop unrolling, SIMD provides real data-level parallelism.
+
+- A single NEON vector operation can perform arithmetic on four `float` values:
+
+  `[C0 C1 C2 C3] += [a a a a] × [B0 B1 B2 B3]`
+
+- Loop reordering makes this possible because matrix B and C are accessed sequentially along the innermost `j` dimension.
+
+- Therefore, loop reordering provides the contiguous memory layout required for efficient SIMD vector loads and stores.
+
+
+---
+
+#### 3. `Instruction Processing`
+
+Observation
+
+- Instruction Processing Bottleneck increases from 30.89% to 56.60%.
+- Useful decreases from 67.50% to 41.93%.
+- Instruction Delivery Bottleneck remains low in both implementations.
+- Discarded Bottleneck decreases from 13.65% to 4.06%.
+
+Interpretation
+
+- SIMD reduces the number of scalar arithmetic operations, but vector instructions are more complex and place pressure on the SIMD/FP execution units.
+
+- The backend must perform vector loads, vector FMA operations, and vector stores.
+
+- Therefore, the main bottleneck remains in instruction processing rather than instruction delivery.
+
+- This suggests that simply replacing scalar arithmetic with SIMD instructions is not enough to fully utilize the CPU.
+
+- Further optimization may require better register reuse, reduced load/store traffic, unrolling of the SIMD loop, or combining SIMD with other optimization techniques.
+
+
+---
+
+#### 4. `L1D Cache and Memory Operations`
+
+Observation
+
+- The speculative load micro-operation count decreases significantly.
+- However, the measured speculative L1D load-miss-to-load-µop ratio becomes much higher in the SIMD profiling run.
+- Store micro-operation behavior also changes significantly after vectorization.
+
+Interpretation
+
+- SIMD changes the type and number of micro-operations generated by the CPU, so cache-counter ratios cannot be compared as directly as between two similar scalar implementations.
+
+- One vector load transfers multiple `float` values at once, meaning the relationship between vector instructions, micro-operations, and cache events differs from the scalar version.
+
+- Therefore, the speculative `L1D Load Misses / Load Micro-operations` ratio should not be interpreted as an exact conventional cache miss rate.
+
+- The more reliable conclusion from this experiment is that SIMD changes the memory-access execution behavior substantially, while the actual runtime improvement remains relatively small.
+
+
+---
+
+#### 5. `Why SIMD Is Not 4× Faster`
+
+Observation
+
+- NEON processes four FP32 values per 128-bit vector.
+- The actual measured speedup is only approximately 1.04×.
+
+Interpretation
+
+- SIMD width represents how many data elements can be processed by one vector instruction, not the total program speedup.
+
+- GEMM execution still includes vector loads and stores, address calculations, loop control, cache accesses, and instruction dependencies.
+
+- Each inner-loop iteration currently loads `B`, loads `C`, executes an FMA, and stores `C` again.
+
+- Therefore, memory traffic remains significant relative to the arithmetic work performed.
+
+- The current implementation does not keep a large amount of C data in SIMD registers across multiple `k` iterations, so repeated loads and stores limit the benefit of vector arithmetic.
+
+- This explains why SIMD alone provides only a modest improvement over the reordered scalar implementation.
+
+
+---
+
+#### 6. `Overall Conclusion`
+
+Observation
+
+- SIMD reduces runtime by approximately 3.55%.
+- GFLOPS increases by approximately 3.68%.
+- The achieved speedup is approximately 1.04×.
+- The SIMD implementation substantially changes the instruction and memory-operation behavior.
+- Instruction Processing Bottleneck becomes the dominant limitation.
+
+Interpretation
+
+- Loop reordering provides memory locality, while SIMD adds data-level parallelism on top of the reordered access pattern.
+
+- The current SIMD implementation successfully uses vector operations but does not yet achieve a large speedup because execution is still limited by memory operations and backend processing.
+
+- SIMD vector width should not be interpreted as expected program-level speedup.
+
+- The next opportunity for optimization is to combine SIMD with techniques such as loop unrolling and register reuse, allowing more arithmetic work to be performed for each load/store operation.
+
+
+
+### SIMD vs SIMD Blocked (O0, N = 512)
+
+| Metric | SIMD GEMM | SIMD Blocked GEMM | Change |
+|---|---:|---:|---:|
+| Runtime (ms) | 213.330 | 299.867 | ~40.56% higher |
+| Performance (GFLOPS) | 1.25708 | 0.894308 | ~28.86% lower |
+| Relative Performance | 1.00× | ~0.71× | Slower |
+
+

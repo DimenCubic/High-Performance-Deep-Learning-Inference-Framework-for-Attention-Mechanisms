@@ -43,4 +43,11 @@ void simd_gemm(
     int N
 );
 
+void simd_blocked_gemm(
+    const float* A,
+    const float* B,
+    float* C,
+    int N
+);
+
 #endif
