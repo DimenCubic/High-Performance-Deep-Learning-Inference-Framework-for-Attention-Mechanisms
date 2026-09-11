@@ -651,3 +651,163 @@ Configuration:
 | 512 | 1.2099| 5.40892| 26.5089| 26.2395| 26.2202|
 | 1024 | 1.31467| 5.37986| 23.2689| 22.1212| 23.3118|
 | 2048 |1.32629 | 5.28184| 19.0648| 19.1099| 19.1405|
+
+## Reordered GEMM vs Blocked GEMM
+
+### Profiling Comparison (O3, N = 2048, Block Size = 128)
+
+| Metric | Reordered GEMM | Blocked GEMM | Change |
+|---|---:|---:|---:|
+| Runtime (ms) | 637.275 | 898.786 | ~41.04% higher |
+| Performance (GFLOPS) | 26.9517 | 19.1099 | ~29.10% lower |
+| Relative Performance | 1.00× | ~0.71× | Slower |
+| CPU Counter Cycles | ~10.83 G | ~15.10 G | ~39.41% higher |
+| Useful | 56.03% | 43.30% | -12.73 percentage points |
+| Instruction Processing Bottleneck | 41.80% | 56.38% | +14.58 percentage points |
+| Instruction Delivery Bottleneck | 0.43% | 0.09% | Slightly lower |
+| Discarded Bottleneck | 1.73% | 0.23% | Lower |
+| Load Micro-operations (Speculative) | 5,935,957,895 | 9,377,406,743 | ~58% higher |
+| L1D Load Misses (Speculative) | 4,501,854,633 | 8,477,625,141 | Much higher |
+| L1D Load Miss Rate | ~75.84% | ~90.40% | +14.56 percentage points |
+| Store Micro-operations (Speculative) | 32,859,283,238 | 32,696,154,731 | Similar |
+| L1D Store Misses (Speculative) | 79,484,992 | 11,818,095 | Lower |
+| L1D Store Miss Rate | ~0.24% | ~0.04% | Lower |
+
+
+### Analysis
+
+#### 1. `Runtime and GFLOPS`
+
+Observation
+
+- Runtime increases from 637.275 ms to 898.786 ms.
+- The blocked implementation is approximately 41.04% slower in runtime.
+- Performance decreases from 26.9517 GFLOPS to 19.1099 GFLOPS.
+- The blocked implementation achieves only about 0.71× the performance of the reordered implementation.
+
+Interpretation
+
+- The blocking transformation does not automatically guarantee better performance.
+
+- Although blocking is designed to improve cache reuse, it also introduces additional loop levels, block-boundary calculations, and shorter inner loops.
+
+- In this experiment, the additional overhead and memory behavior outweigh the expected benefit from cache reuse.
+
+- The reordered implementation is already highly compiler-friendly because its innermost loop performs long sequential accesses to matrices B and C.
+
+- Therefore, the compiler may optimize and vectorize the reordered version more effectively than the blocked version.
+
+
+---
+
+#### 2. `CPU Cycles`
+
+Observation
+
+- CPU counter cycles increase from approximately 10.83 G to 15.10 G.
+- This represents approximately a 39.41% increase in cycles.
+- The Useful ratio decreases from 56.03% to 43.30%.
+
+Interpretation
+
+- The blocked version requires significantly more CPU cycles to complete the same matrix multiplication workload.
+
+- The additional `ii`, `kk`, and `jj` block loops introduce extra loop-control and address-calculation overhead.
+
+- Shorter inner loops may also reduce some optimization opportunities available to the compiler.
+
+- The decrease in Useful execution is consistent with the higher runtime and lower GFLOPS.
+
+
+---
+
+#### 3. `Instruction Processing Bottleneck`
+
+Observation
+
+- Instruction Processing Bottleneck increases from 41.80% to 56.38%.
+- Instruction Delivery Bottleneck remains extremely low in both versions.
+- Discarded Bottleneck also remains relatively small.
+
+Interpretation
+
+- The main limitation of the blocked implementation is still on the instruction-processing side rather than instruction delivery.
+
+- The CPU is able to provide instructions, but the backend requires more time to complete them.
+
+- The additional block-management operations and increased memory activity may contribute to the higher processing bottleneck.
+
+- This result suggests that the selected blocking strategy does not reduce backend pressure for this workload.
+
+
+---
+
+#### 4. `L1D Cache`
+
+Observation
+
+- The speculative L1D load miss rate increases from approximately 75.84% to 90.40%.
+- L1D load misses increase from approximately 4.50 billion to 8.48 billion.
+- Load micro-operations also increase significantly from approximately 5.94 billion to 9.38 billion.
+- The L1D store miss rate decreases, but store behavior does not appear to be the dominant problem.
+
+Interpretation
+
+- Contrary to the intended goal of blocking, the current blocked implementation produces worse L1D load behavior in this profiling experiment.
+
+- One possible reason is that the current block-loop ordering and block size do not match the M2 cache hierarchy well.
+
+- The blocked implementation repeatedly enters smaller subregions of the matrices, increasing loop and memory-access complexity.
+
+- Meanwhile, the reordered implementation already performs long sequential accesses to matrix B and C, which gives the hardware prefetcher and compiler a very simple access pattern.
+
+- Blocking therefore disrupts some of the advantages of the long sequential inner loop without providing enough additional cache reuse to compensate.
+
+- This demonstrates that blocking must be tuned for a particular hardware architecture instead of assuming that any block size will improve cache performance.
+
+
+---
+
+#### 5. `Block Size Tuning`
+
+Observation
+
+- Performance improves as the block size increases from 16 to 128.
+- `BLOCK_SIZE = 128` produces the best result among the tested values.
+- Increasing the block size further to 256 slightly reduces performance.
+
+Interpretation
+
+- Very small blocks introduce excessive loop and block-management overhead.
+
+- Increasing the block size reduces this overhead and provides longer inner loops.
+
+- However, if the block size becomes too large, the working set of the active tiles may become less suitable for the cache hierarchy.
+
+- The result suggests that `BLOCK_SIZE = 128` provides the best trade-off among the tested configurations, but even the best blocked version does not outperform the simple reordered GEMM.
+
+
+---
+
+#### 6. `Overall Conclusion`
+
+Observation
+
+- The best tested blocked configuration uses `BLOCK_SIZE = 128`.
+- However, blocked GEMM is still slower than reordered GEMM at `N = 2048` and `O3`.
+- Runtime increases by approximately 41%.
+- GFLOPS decreases by approximately 29%.
+- CPU cycles and the Instruction Processing Bottleneck both increase.
+- L1D load behavior also becomes worse.
+
+Interpretation
+
+- Memory tiling is theoretically useful because it can increase data reuse, but its effectiveness strongly depends on hardware, block size, loop ordering, compiler optimization, and the existing memory-access pattern.
+
+- In this project, loop reordering had already created highly sequential access to B and C.
+
+- The additional blocking structure introduces overhead and interferes with some of the compiler and hardware optimizations that benefit the simpler reordered loop.
+
+- Therefore, the current experiment shows that a theoretically reasonable optimization can reduce real performance if it is not well matched to the target architecture.
+
+- Performance optimization must always be validated through benchmarking and profiling rather than assumed to be beneficial.

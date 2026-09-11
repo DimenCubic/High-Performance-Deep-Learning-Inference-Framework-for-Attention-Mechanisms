@@ -63,6 +63,7 @@ add_executable(
     src/gemm/reordered_gemm.cpp
     src/gemm/unrolled_gemm.cpp
     src/gemm/blocked_gemm.cpp
+    src/gemm/blocked2_gemm.cpp
 )
 
 # For efficiency
@@ -74,6 +75,7 @@ add_executable(
     src/gemm/reordered_gemm.cpp
     src/gemm/unrolled_gemm.cpp
     src/gemm/blocked_gemm.cpp
+    src/gemm/blocked2_gemm.cpp
     
     src/utils/matrix.cpp
     src/utils/timer.cpp

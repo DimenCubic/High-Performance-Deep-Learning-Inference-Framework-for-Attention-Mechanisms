@@ -29,4 +29,11 @@ void blocked_gemm(
     int N
 );
 
+void blocked2_gemm(
+    const float* A,
+    const float* B,
+    float* C,
+    int N
+);
+
 #endif

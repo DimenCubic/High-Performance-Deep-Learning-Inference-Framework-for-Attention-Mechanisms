@@ -166,6 +166,33 @@ benchmark/benchmark_gemm.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/benchmark/benchmark_gemm.cpp.s
 .PHONY : benchmark/benchmark_gemm.cpp.s
 
+src/gemm/blocked2_gemm.o: src/gemm/blocked2_gemm.cpp.o
+.PHONY : src/gemm/blocked2_gemm.o
+
+# target to build an object file
+src/gemm/blocked2_gemm.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_test.dir/build.make CMakeFiles/gemm_test.dir/src/gemm/blocked2_gemm.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/src/gemm/blocked2_gemm.cpp.o
+.PHONY : src/gemm/blocked2_gemm.cpp.o
+
+src/gemm/blocked2_gemm.i: src/gemm/blocked2_gemm.cpp.i
+.PHONY : src/gemm/blocked2_gemm.i
+
+# target to preprocess a source file
+src/gemm/blocked2_gemm.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_test.dir/build.make CMakeFiles/gemm_test.dir/src/gemm/blocked2_gemm.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/src/gemm/blocked2_gemm.cpp.i
+.PHONY : src/gemm/blocked2_gemm.cpp.i
+
+src/gemm/blocked2_gemm.s: src/gemm/blocked2_gemm.cpp.s
+.PHONY : src/gemm/blocked2_gemm.s
+
+# target to generate assembly for a file
+src/gemm/blocked2_gemm.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_test.dir/build.make CMakeFiles/gemm_test.dir/src/gemm/blocked2_gemm.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm_benchmark.dir/build.make CMakeFiles/gemm_benchmark.dir/src/gemm/blocked2_gemm.cpp.s
+.PHONY : src/gemm/blocked2_gemm.cpp.s
+
 src/gemm/blocked_gemm.o: src/gemm/blocked_gemm.cpp.o
 .PHONY : src/gemm/blocked_gemm.o
 
@@ -362,6 +389,9 @@ help:
 	@echo "... benchmark/benchmark_gemm.o"
 	@echo "... benchmark/benchmark_gemm.i"
 	@echo "... benchmark/benchmark_gemm.s"
+	@echo "... src/gemm/blocked2_gemm.o"
+	@echo "... src/gemm/blocked2_gemm.i"
+	@echo "... src/gemm/blocked2_gemm.s"
 	@echo "... src/gemm/blocked_gemm.o"
 	@echo "... src/gemm/blocked_gemm.i"
 	@echo "... src/gemm/blocked_gemm.s"
