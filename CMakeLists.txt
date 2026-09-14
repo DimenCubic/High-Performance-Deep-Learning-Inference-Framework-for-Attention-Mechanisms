@@ -90,9 +90,11 @@ add_executable(
 add_executable(
     ops_test
 
-    tests/cpp/test_ops.cpp
+    #tests/cpp/test_ops.cpp
+    tests/cpp/test_ops_temp.cpp
 
     src/ops/softmax.cpp
+    src/ops/layernorm.cpp
 )
 
 

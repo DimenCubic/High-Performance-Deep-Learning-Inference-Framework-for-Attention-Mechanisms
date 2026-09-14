@@ -8,5 +8,14 @@ void softmax(
 );
 
 
+void layer_norm(
+    const float* input,
+    const float* gamma,
+    const float* beta,
+    float* output,
+    int size,
+    float epsilon
+);
+
 
 #endif
