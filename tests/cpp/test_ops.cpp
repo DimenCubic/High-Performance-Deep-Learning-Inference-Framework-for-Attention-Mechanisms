@@ -25,6 +25,8 @@ int main(){
 
     std::vector<float> output(input.size());
 
+
+    // Test function gather.
     softmax(input.data(), output.data(), static_cast<int>(input.size())); // static_cast<int>  used to transfer size_t -> int
 
 

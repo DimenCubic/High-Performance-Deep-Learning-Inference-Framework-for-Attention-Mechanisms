@@ -59,3 +59,15 @@ cmake -S . -B build-Ofast -DOPT_LEVEL=Ofast
 cmake --build build-Ofast
 
 ./build-Ofast/gemm_benchmark
+
+
+
+
+
+测试 Operators的样例
+python tests/python/generate_softmax_input.py
+cmake --build build-O0
+
+./build-O0/ops_test
+python tests/python/test_softmax_reference.py
+
