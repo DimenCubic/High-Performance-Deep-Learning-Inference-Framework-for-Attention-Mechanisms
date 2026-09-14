@@ -56,7 +56,7 @@ include_directories(include)
 add_executable(
     gemm_test
 
-    src/main.cpp
+    tests/cpp/test_gemm.cpp
     src/utils/matrix.cpp
 
     src/gemm/naive_gemm.cpp
@@ -84,3 +84,17 @@ add_executable(
     src/utils/matrix.cpp
     src/utils/timer.cpp
 )
+
+
+# For Operator Tests
+add_executable(
+    ops_test
+
+    tests/cpp/test_ops.cpp
+
+    src/ops/softmax.cpp
+)
+
+
+
+

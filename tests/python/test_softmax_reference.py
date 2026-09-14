@@ -7,15 +7,15 @@ TOLERANCE = 1e-5
 
 # Load data
 x =  np.loadtxt("tests/data/softmax_input.txt", dtype = np.float32)
-cpp_output = np.loadtxt("tests/data/spftmax_cpp_output.txt", dtype = np.float32)
+cpp_output = np.loadtxt("tests/data/softmax_cpp_output.txt", dtype = np.float32)
 
 
 
 # NumPy Reference
 x_scaled = x - np.max(x)
-enp_x = np.enp(x_scaled)
+enp_x = np.exp(x_scaled)
 
-numpy_out = (exp_x / np.sum(enp_x))
+numpy_out = (enp_x / np.sum(enp_x))
 
 
 # PyTorch Reference
@@ -25,8 +25,13 @@ torch_output = torch.softmax(torch_input, dim = 0).numpy()  # Torch will automat
 
 
 # Error Calculation
-numpy_error = np.max(np.abs(cpp_output - numpy_output))
+numpy_error = np.max(np.abs(cpp_output - numpy_out))
 torch_error = np.max(np.abs(cpp_output - torch_output))
+
+
+print("NumPy max error: ", numpy_error, "\n")
+print("PyTorch max error: ", torch_error, "\n")
+
 
 
 
