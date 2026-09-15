@@ -83,4 +83,21 @@ void attention_scores(
 
 
 
+void attention_softmax(
+    const float* scores, 
+    float* weights, 
+    int seq_len
+);
+
+
+void scaled_dot_product_attention(
+    const float* Q,
+    const float* K,
+    const float* V,
+    float* output,
+    int seq_len,
+    int head_dim
+);
+
+
 #endif
