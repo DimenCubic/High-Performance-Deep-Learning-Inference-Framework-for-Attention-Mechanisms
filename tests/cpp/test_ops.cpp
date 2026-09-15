@@ -103,10 +103,32 @@ void test_softmax(){
 }
 
 
+
+
+void test_gelu(){
+    std::vector<float> input = {-3.0f, -1.0f, 0.0f, 1.0f, 3.0f};
+    std::vector<float> output(input.size());
+
+    gelu(input.data(), output.data(), static_cast<int>(input.size()));
+
+
+    std::cout<<"DELU result:"<<std::endl;
+    for(float value : output)
+        std::cout<<value<<" ";
+
+    std::cout<<std::endl;
+}
+
+
+
+
+
+
 int main(){
     
     //test_softmax();
-    test_layernorm();
+    //test_layernorm();
+    test_gelu();
 
     return 0;
 

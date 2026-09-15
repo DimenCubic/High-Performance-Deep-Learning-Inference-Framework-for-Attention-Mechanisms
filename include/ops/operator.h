@@ -18,4 +18,11 @@ void layer_norm(
 );
 
 
+void gelu(
+    const float* input,
+    float* output,
+    int size
+);
+
+
 #endif
