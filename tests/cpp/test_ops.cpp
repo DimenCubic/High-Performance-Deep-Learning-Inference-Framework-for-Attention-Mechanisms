@@ -106,17 +106,44 @@ void test_softmax(){
 
 
 void test_gelu(){
-    std::vector<float> input = {-3.0f, -1.0f, 0.0f, 1.0f, 3.0f};
+    std::ifstream input_file("tests/data/gelu_input.txt");
+
+    if(!input_file){
+        std::cerr << "Failed to open GELU input file." << std::endl;
+        return;
+    }
+
+    std::vector<float> input;
+    float value;
+
+    while(input_file>>value)
+        input.push_back(value);
+
+
     std::vector<float> output(input.size());
 
     gelu(input.data(), output.data(), static_cast<int>(input.size()));
 
 
-    std::cout<<"DELU result:"<<std::endl;
+    /*std::cout<<"DELU result:"<<std::endl;
     for(float value : output)
         std::cout<<value<<" ";
 
-    std::cout<<std::endl;
+
+    std::cout<<std::endl;*/
+
+
+    std::ofstream output_file("tests/data/gelu_cpp_output.txt");
+    output_file << std::setprecision(9);
+
+    for(float x : output)
+        output_file << x <<"\n";
+
+
+    std::cout<< "GELU completed for " << input.size() << " values." << std::endl;
+
+
+    
 }
 
 
