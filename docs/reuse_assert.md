@@ -71,3 +71,6 @@ cmake --build build-O0
 ./build-O0/ops_test
 python tests/python/test_softmax_reference.py
 
+
+
+
