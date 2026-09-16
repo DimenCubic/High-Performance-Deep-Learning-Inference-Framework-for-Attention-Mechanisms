@@ -339,6 +339,114 @@ void test_attention_softmax(){
 }
 
 
+
+// Two helpers at here.
+std::vector<float> read_values(const std::string& filename){ // & here means refernece outside file instead of copying one.
+    std::ifstream file(filename);
+
+    if(!file){
+        std::cerr << "Failed to open "<<filename << std::endl;
+        return;
+    }
+
+
+    std::vector<float> values;
+    float value;
+    while(file >> value)
+        values.push_back(value);
+
+    return values;
+}
+
+void write_values(const std::string& filename, const std::vector<float>& values){
+    std::ofstream file(filename);
+
+    if(!file){
+        std::cerr << "Failed to write: "<<filename<<std::endl;
+
+        return;
+    }
+
+    file << std::setprecision(9);
+
+    for(float value: values)
+        file << value<< "\n";
+
+}
+
+
+void test_attention_end_to_end(){
+    const int seq_len = 8;
+    const int hiddden_dim = 16;
+    const int head_dim = 8;
+
+    // Load input data
+    std::vector<float> X = read_values("tests/data/attention_input.txt");
+    std::vector<float> W_q = read_values("tests/data/attention_wq.txt");
+    std::vector<float> W_k = read_values("tests/data/attention_wk.txt");
+    std::vector<float> W_v = read_values("tests/data/attention_wv.txt");
+
+
+    // Validate Size
+    if(X.size() != static_cast<size_t>(seq_len * hiddden_dim)){   // X is a vector, which .size() number is a size_t type, so we also need to transfer it to size_t.
+        std::cerr << "Invalid attention input size." << std::endl;
+
+        return;
+    }
+
+
+    if(W_q.size() != static_cast<size_t>(seq_len * hiddden_dim)||
+       W_k.size() != static_cast<size_t>(seq_len * hiddden_dim)|| 
+       W_v.size() != static_cast<size_t>(seq_len * hiddden_dim)){
+
+        std::cerr << "Invalid attention weight size." << std::endl;
+
+        return;
+    }
+
+
+    // Allocate Q, K, V
+    std::vector<float> Q(seq_len * head_dim);
+    std::vector<float> K(seq_len * head_dim);
+    std::vector<float> V(seq_len * head_dim);
+
+
+    // QKV Projection
+    qkv_projection(X.data(), W_q.data(), W_k.data(), W_v.data(), Q.data(), K.data(), V.data(), seq_len, hiddden_dim, head_dim);
+
+
+
+
+    // Attention scores
+    std::vector<float> scores(seq_len * seq_len);
+    attention_scores(Q.data(), K.data(), scores.data(), seq_len, head_dim);
+
+
+    // Attention softmax
+    std::vector<float> weights(seq_len * seq_len);
+    attention_softmax(scores.data(), weights.data(), seq_len);
+
+    
+    // final hidden values
+    std::vector<float> output(seq_len * head_dim);
+    scaled_dot_product_attention(Q.data(), K.data(), V.data(), output.data(), seq_len, head_dim);
+
+    
+    
+    // Save all intermediate and final results.
+    write_values("tests/data/attention_q_cpp.txt", Q);
+    write_values("tests/data/attention_k_cpp.txt", K);
+    write_values("tests/data/attention_v_cpp.txt", V);
+
+    write_values("tests/data/attention_scores_cpp.txt", scores);
+    write_values("tests/data/attention_weights_cpp.txt", weights);
+    write_values("tests/data/attention_output_cpp.txt", output);
+
+    std::cout << "End-to-End attention completed" << std::endl;
+
+}
+
+
 int main(){
     
     //test_softmax();
@@ -348,7 +456,7 @@ int main(){
     //test_qkv_projection();
     //test_attention_scores();
     //test_attention_softmax();
-    
+    test_attention_end_to_end();
 
     return 0;
 

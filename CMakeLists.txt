@@ -100,6 +100,7 @@ add_executable(
     src/ops/qkv.cpp
     src/ops/attention_scores.cpp
     src/ops/attention_softmax.cpp
+    src/ops/scaled_dot_product_attention.cpp
 )
 
 
