@@ -148,6 +148,45 @@ void test_gelu(){
 
 
 
+void test_matmul(){
+    const int M = 3;
+    const int K = 4;
+    const int N = 2;
+
+    std::vector<float> A = {
+        1,2,3,4,
+        5,6,7,8
+        ,9,10,11,12
+    };
+
+    std::vector<float> B = {
+        1,2,
+        3,4,
+        5,6,
+        7,8
+    };
+
+    std::vector<float>C(M*N, 0.0f);
+
+
+    matmul(A.data(), B.data(), C.data(), M, K, N);
+
+    std::cout<< "Matmul result:"<< std::endl;
+    for(int i = 0; i < M; i++){
+        for(int j = 0; j < N; j++){
+            std::cout<< C[i*N + j] << " ";
+        }
+
+        std::cout << std::endl;
+    }
+    
+}
+
+
+
+
+
+
 
 
 
@@ -155,7 +194,8 @@ int main(){
     
     //test_softmax();
     //test_layernorm();
-    test_gelu();
+    //est_gelu();
+    test_matmul();
 
     return 0;
 

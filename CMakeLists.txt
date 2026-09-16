@@ -96,6 +96,7 @@ add_executable(
     src/ops/softmax.cpp
     src/ops/layernorm.cpp
     src/ops/gelu.cpp
+    src/ops/matmul.cpp
 )
 
 
