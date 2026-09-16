@@ -184,10 +184,159 @@ void test_matmul(){
 
 
 
+void test_qkv_projection(){
+    const int seq_len = 3;
+    const int hidden_dim = 4;
+    const int head_dim = 2;
+
+    std::vector<float> X = {
+        1,2,3,4,
+        5,6,7,8,
+        9,10,11,12
+    };
+
+    std::vector<float> W_q = {
+        1,0,
+        0,1,
+        1,0,
+        0,1
+    };
+
+
+    std::vector<float> W_k = {
+        1,1,
+        0,1,
+        1,0,
+        0,1
+    };
+
+
+    std::vector<float> W_v = {
+        1,0,
+        1,0,
+        0,1,
+        0,1
+    };
+
+
+    std::vector<float> Q(seq_len * head_dim);
+    std::vector<float> K(seq_len * head_dim);
+    std::vector<float> V(seq_len * head_dim);
+
+    qkv_projection(X.data(), W_q.data(), W_k.data(), W_v.data(), Q.data(), K.data(), V.data(), seq_len, hidden_dim, head_dim);
+
+    std::cout<<"Q:"<<std::endl;
+
+    for(int i = 0; i < seq_len; i++){
+        for(int j = 0; j < head_dim; j++)
+            std::cout<<Q[i*head_dim+j] << " ";
+
+        std::cout<<std::endl;
+    }
+
+    std::cout<<std::endl;
+    std::cout<<"K:"<<std::endl;
+
+    for(int i = 0; i < seq_len; i++){
+        for(int j = 0; j < head_dim; j++)
+            std::cout<<K[i*head_dim+j] << " ";
+
+        std::cout<<std::endl;
+    }
+
+    std::cout<<std::endl;
+
+
+    std::cout<<"V:"<<std::endl;
+
+    for(int i = 0; i < seq_len; i++){
+        for(int j = 0; j < head_dim; j++)
+            std::cout<<V[i*head_dim+j] << " ";
+
+        std::cout<<std::endl;
+    }
 
 
 
+}
 
+
+
+void test_attention_scores(){
+    const int seq_len = 3;
+    const int head_dim = 2;
+
+    std::vector<float> Q = {
+        4, 6,
+        12, 14,
+        20, 22
+    };
+
+    std::vector<float> K = {
+        4, 7,
+        12, 19,
+        20, 31
+    };
+
+    std::vector<float> scores(
+        seq_len * seq_len
+    );
+
+
+     attention_scores(
+        Q.data(),
+        K.data(),
+        scores.data(),
+        seq_len,
+        head_dim
+    );
+
+    std::cout << "Attention Scores:" << std::endl;
+
+    for(int i = 0; i < seq_len; i++)
+    {
+        for(int j = 0; j < seq_len; j++)
+            std::cout << scores[i * seq_len + j] << " ";
+        
+        std::cout << std::endl;
+    }
+}
+
+
+
+void test_attention_softmax(){
+    const int seq_len = 3;
+
+    std::vector<float> scores = {
+        41.0122f, -INFINITY, -INFINITY,
+        3.2376f, 2.9138f, -INFINITY,
+        1.4630f, 0.2763f, 1.0896f
+    };
+
+    std::vector<float> weights(seq_len*seq_len);
+
+     
+    attention_softmax(scores.data(), weights.data(), seq_len);
+
+
+    std::cout<< "Attention Weights:" << std::endl;
+
+    for(int i = 0; i < seq_len; i++){
+        float row_sum = 0.0f;
+
+        for(int j = 0; j < seq_len; j++){
+            float value = weights[i * seq_len + j];
+
+            std::cout << value << " ";
+
+            row_sum += value;
+        }
+
+        std::cout << " | sum = " << row_sum << std::endl;
+    }
+
+
+}
 
 
 int main(){
@@ -195,7 +344,11 @@ int main(){
     //test_softmax();
     //test_layernorm();
     //est_gelu();
-    test_matmul();
+    //test_matmul();
+    //test_qkv_projection();
+    //test_attention_scores();
+    //test_attention_softmax();
+    
 
     return 0;
 

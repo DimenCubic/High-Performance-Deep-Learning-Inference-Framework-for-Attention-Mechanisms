@@ -97,6 +97,9 @@ add_executable(
     src/ops/layernorm.cpp
     src/ops/gelu.cpp
     src/ops/matmul.cpp
+    src/ops/qkv.cpp
+    src/ops/attention_scores.cpp
+    src/ops/attention_softmax.cpp
 )
 
 
