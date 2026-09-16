@@ -36,7 +36,7 @@ numpy_scores = (numpy_q @ numpy_k.T) / np.sqrt(np.float32(HEAD_DIM))
 causal_mask = np.triu(np.ones((SEQ_LEN, SEQ_LEN), dtype = bool), k = 1)  # np.ones will generate a true matrix first, then triu: upper triangular will keep \ 对角线上方的元素为True
 numpy_scores = np.where(causal_mask, -np.inf, numpy_scores)    
 
-shofted_scores = numpy_scores - np.max(numpy_scores, axis = 1, keepdims = True)  # axis = 1 means find maximum value line by line, keepdims, keep the dimension, [[1],[2]] instead of [1,2]
+shifted_scores = numpy_scores - np.max(numpy_scores, axis = 1, keepdims = True)  # axis = 1 means find maximum value line by line, keepdims, keep the dimension, [[1],[2]] instead of [1,2]
 exp_scores = np.exp(shifted_scores)
 numpy_weights = exp_scores / np.sum(exp_scores, axis = 1, keepdims = True)
 
@@ -74,20 +74,32 @@ torch_weights = torch.softmax(torch_scores, dim = -1)
 
 # Calculate scores, weights and output error.
 np_finite_mask = np.isfinite(numpy_scores)   # avoid -inf - -inf will result NaN
-np_scores_error = np.max(np.abs(cpp_scores[finite_mask] - numpy_scores[finite_mask]))
+np_scores_error = np.max(np.abs(cpp_scores[np_finite_mask] - numpy_scores[np_finite_mask]))
 
 np_weights_error = np.max(np.abs(cpp_weights - numpy_weights))
 
 np_output_error = np.max(np.abs(cpp_output - numpy_output))
 
 
-torch_finite_mask = np.isfinite(torch_scores)   # avoid -inf - -inf will result NaN
-torch_scores_error = np.max(np.abs(cpp_scores[finite_mask] - torch_scores[finite_mask]))
 
-torch_weights_error = np.max(np.abs(cpp_weights - torch_weights))
+# Convert PyTorch scores to NumPy
+torch_scores_np = torch_scores.detach().cpu().numpy()
+torch_finite_mask = np.isfinite(torch_scores_np)   # avoid -inf - -inf will result NaN
+torch_scores_error = np.max(np.abs(cpp_scores[torch_finite_mask] - torch_scores_np[torch_finite_mask]))
 
-torch_output_error = np.max(np.abs(cpp_output - torch_output))
+torch_weights_np = torch_weights.detach().cpu().numpy()
+torch_weights_error = np.max(np.abs(cpp_weights - torch_weights_np))
 
+torch_output_np = torch_output.detach().cpu().numpy()
+torch_output_error = np.max(np.abs(cpp_output - torch_output_np))
+
+
+print("NumPy scores error: ", np_scores_error)
+print("NumPy weights error: ", np_weights_error)
+print("NumPy output error: ", np_output_error)
+print("Torch scores error: ", torch_scores_error)
+print("Torch weights error: ", torch_weights_error)
+print("Torch output error: ", torch_output_error)
 
 assert np_scores_error < TOLERANCE
 assert np_weights_error < TOLERANCE
@@ -98,4 +110,4 @@ assert torch_weights_error < TOLERANCE
 assert torch_output_error < TOLERANCE
 
 
-print("Attention End to End Validation success!")
+print("Attention End to End Validation Success!")

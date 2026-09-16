@@ -346,7 +346,7 @@ std::vector<float> read_values(const std::string& filename){ // & here means ref
 
     if(!file){
         std::cerr << "Failed to open "<<filename << std::endl;
-        return;
+        return {};
     }
 
 
