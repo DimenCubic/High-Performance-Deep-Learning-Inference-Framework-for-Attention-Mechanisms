@@ -23,7 +23,8 @@ int main(){
         //blocked_gemm(A, B, C_test, N);
         //blocked2_gemm(A,B,C_test, N);
         //simd_gemm(A, B, C_test, N);
-        simd_blocked_gemm(A, B, C_test, N);
+        //simd_blocked_gemm(A, B, C_test, N);
+        optimized_gemm(A, B, C_test, N);
 
         /*for(int i = 0; i < N; i++){
             for(int j = 0; j < N; j++){

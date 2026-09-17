@@ -115,7 +115,7 @@ add_executable(
     src/gemm/optimized_gemm.cpp
     
     src/utils/matrix.cpp
-    src/utils/timer.cpp›
+    src/utils/timer.cpp
 )
 
 target_include_directories(

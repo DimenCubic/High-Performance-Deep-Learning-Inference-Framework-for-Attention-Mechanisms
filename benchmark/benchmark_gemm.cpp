@@ -6,7 +6,7 @@
 #include "utils/timer.h"
 
 int main(){
-    int N = 512;
+    int N = 2048;
 
     int matrix_size = N * N;
 

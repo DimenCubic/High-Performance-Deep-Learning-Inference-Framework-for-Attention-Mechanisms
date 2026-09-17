@@ -49,22 +49,22 @@ void optimized_gemm(const float* A, const float* B, float* C, int N){
                             vst1q_f32(&C[c_base + j + 4], c1);
                             vst1q_f32(&C[c_base + j + 8], c2);
                             vst1q_f32(&C[c_base + j + 12], c3);
-
-
-                            // remaining SIMD Chunks
-                            for(; j + 3 < j_end; j += 4){
-                                float32x4_t b_vec = vld1q_f32(&B[b_base + j]);
-                                float32x4_t c_vec = vld1q_f32(&C[c_base + j]);
-
-                                c_vec = vfmaq_f32(c_vec, a_vec, b_vec);
-                                vst1q_f32(&C[c_base + j], c_vec);
-                            }
-
-
-                            // Scalar Cleanup
-                            for(; j < j_end; j++)
-                                C[c_base + j] += a * B[b_base + j];
                         }
+
+                        // remaining SIMD Chunks
+                        for(; j + 3 < j_end; j += 4){
+                            float32x4_t b_vec = vld1q_f32(&B[b_base + j]);
+                            float32x4_t c_vec = vld1q_f32(&C[c_base + j]);
+
+                            c_vec = vfmaq_f32(c_vec, a_vec, b_vec);
+                            vst1q_f32(&C[c_base + j], c_vec);
+                        }
+
+
+                        // Scalar Cleanup
+                        for(; j < j_end; j++)
+                            C[c_base + j] += a * B[b_base + j];
+                        
                     }
                 }
             }

@@ -1010,7 +1010,59 @@ Interpretation
 
 
 
-## Blocked Sweep
+## Final Optimized GEMM
+
+### Runtime (ms) [128 Block Size]
+
+| Matrix Size | O0 | O1 | O2 | O3 | Ofast |
+|---|---:|---:|---:|---:|---:|
+| 128 |4.80558 | 0.393967| 0.39205| 0.44845| 0.393358|
+| 256 |37.574 |4.78148 | 8.90257| 4.68408| 4.76032|
+| 512 | 319.87| 40.7695| 38.2581| 39.4851|40.6056 |
+| 1024 | 2409.11|318.99 |319.797 |333.308 |318.523 |
+| 2048 | 21556.2| 4601.61| 4777.26| 4821.26| 4647.44|
+
+### Performance (GFLOPS) [128 Block Size]
+
+| Matrix Size | O0 | O1 | O2 | O3 | Ofast |
+|---|---:|---:|---:|---:|---:|
+| 128 | 0.869389|10.6047 |10.6566 | 9.31636| 10.6212|
+| 256 | 0.891279| 7.00387|3.76171 | 7.14952| 7.035|
+| 512 |0.838382 |6.5778 | 7.00957| 6.79175| 6.60435|
+| 1024 |0.890966 | 6.72884| 6.71187|6.43979 | 6.73971|
+| 2048 |0.796785 | 3.73254| 3.5953| 3.56248|3.69573 |
 
 
 
+
+## Unrolled GEMM vs Final Optimized GEMM
+
+### Performance Comparison (O3)
+
+| Matrix Size | Unrolled Runtime (ms) | Optimized Runtime (ms) | Runtime Change | Unrolled GFLOPS | Optimized GFLOPS | GFLOPS Change |
+|---:|---:|---:|---:|---:|---:|---:|
+| 128  | 0.162133 | 0.448450 | ~176.59% higher | 25.7684 | 9.31636 | ~63.85% lower |
+| 256  | 1.31199  | 4.68408  | ~257.02% higher | 25.5252 | 7.14952 | ~71.99% lower |
+| 512  | 9.82059  | 39.4851  | ~302.06% higher | 27.3072 | 6.79175 | ~75.13% lower |
+| 1024 | 76.5122  | 333.308  | ~335.63% higher | 28.0535 | 6.43979 | ~77.04% lower |
+
+### Analysis
+
+#### Runtime and GFLOPS
+
+**Observation**
+
+- The final optimized implementation is slower than the unrolled GEMM for every tested matrix size under `O3`.
+- At `N = 128`, runtime increases from `0.162133 ms` to `0.448450 ms`.
+- At `N = 1024`, runtime increases from `76.5122 ms` to `333.308 ms`.
+- The performance gap becomes larger as the matrix size increases.
+- At `N = 1024`, GFLOPS decreases from `28.0535` to only `6.43979`.
+- The final optimized implementation therefore achieves only about `22.96%` of the unrolled GEMM performance at `N = 1024`.
+
+**Interpretation**
+
+- Combining multiple optimization techniques does not automatically produce better performance.
+- Although the final implementation combines blocking, SIMD, loop unrolling, and OpenMP, the interaction between these techniques introduces additional overhead.
+- The unrolled GEMM already provides a simple and compiler-friendly execution structure with sequential accesses to matrices `B` and `C`.
+- The final optimized implementation introduces block loops, OpenMP scheduling, additional boundary calculations, and explicit SIMD operations.
+- These additional mechanisms can increase execution overhead enough to outweigh their expected benefits.
