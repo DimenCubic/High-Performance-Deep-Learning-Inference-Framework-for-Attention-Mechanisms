@@ -1009,3 +1009,8 @@ Interpretation
 | Relative Performance | 1.00× | ~0.71× | Slower |
 
 
+
+## Blocked Sweep
+
+
+

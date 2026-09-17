@@ -6,8 +6,22 @@ project(
     LANGUAGES CXX
 )
 
+ 
+
 set(CMAKE_CXX_STANDARD 17)          # using C++ 17 standard  == g++ -std=c++17
 set(CMAKE_CXX_STANDARD_REQUIRED ON) # Necessary C++ 17
+
+
+
+
+# OpenMP on macOS
+if(APPLE)
+    set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp")
+    set(OpenMP_CXX_LIB_NAMES "omp")
+    set(OpenMP_omp_LIBRARY "/opt/homebrew/opt/libomp/lib/libomp.dylib")
+endif()
+
+find_package(OpenMP REQUIRED)
 
 
 
@@ -49,7 +63,10 @@ message(
 
 
 
-include_directories(include)
+include_directories(
+    include
+    /opt/homebrew/opt/libomp/include
+)
 
 
 # For correctness
@@ -66,7 +83,22 @@ add_executable(
     src/gemm/blocked2_gemm.cpp
     src/gemm/simd_gemm.cpp
     src/gemm/simd_blocked_gemm.cpp
+    src/gemm/optimized_gemm.cpp
 )
+
+target_include_directories(
+    gemm_test
+    PRIVATE
+    /opt/homebrew/opt/libomp/include
+)
+
+
+target_link_libraries(
+    gemm_test
+    PRIVATE
+    OpenMP::OpenMP_CXX
+)
+
 
 # For efficiency
 add_executable(
@@ -80,10 +112,27 @@ add_executable(
     src/gemm/blocked2_gemm.cpp
     src/gemm/simd_gemm.cpp
     src/gemm/simd_blocked_gemm.cpp
+    src/gemm/optimized_gemm.cpp
     
     src/utils/matrix.cpp
-    src/utils/timer.cpp
+    src/utils/timer.cpp›
 )
+
+target_include_directories(
+    gemm_benchmark
+    PRIVATE
+    /opt/homebrew/opt/libomp/include
+)
+
+
+target_link_libraries(
+    gemm_benchmark
+    PRIVATE
+    OpenMP::OpenMP_CXX
+)
+
+
+
 
 
 # For Operator Tests

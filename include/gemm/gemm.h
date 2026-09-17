@@ -50,4 +50,12 @@ void simd_blocked_gemm(
     int N
 );
 
+
+void optimized_gemm(
+    const float* A,
+    const float* B,
+    float* C,
+    int N
+);
+
 #endif
