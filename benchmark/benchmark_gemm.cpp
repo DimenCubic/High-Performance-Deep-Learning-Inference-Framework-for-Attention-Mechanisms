@@ -6,7 +6,7 @@
 #include "utils/timer.h"
 
 int main(){
-    int N = 2048;
+    int N = 512;
 
     int matrix_size = N * N;
 
@@ -41,8 +41,8 @@ int main(){
         //unrolled_gemm(A.data(), B.data(), C.data(), N);
         //blocked_gemm(A.data(), B.data(), C.data(), N);
         //blocked2_gemm(A.data(), B.data(), C.data(), N);
-        //simd_gemm(A.data(), B.data(), C.data(), N);
-        simd_blocked_gemm(A.data(), B.data(), C.data(), N);
+        simd_gemm(A.data(), B.data(), C.data(), N);
+        //simd_blocked_gemm(A.data(), B.data(), C.data(), N);
 
         double  elapsed = timer.stop();
         total_time += elapsed;

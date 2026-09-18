@@ -6,6 +6,9 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <queue>
+#include <stdexcept>
+
 
 
 class Graph{
@@ -21,6 +24,9 @@ class Graph{
         const std::vector<std::vector<int>>& edges() const;
         const std::vector<int>& indegrees() const;
 
+
+        // Topological Sort
+        std::vector<int> topological_sort() const;
 
 
     private:

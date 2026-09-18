@@ -1,10 +1,14 @@
 #include "graph/graph.h"
 
+
+
 void Graph::add_node(const Node& node){
     nodes_.push_back(node);
 }
 
 
+
+// Graph build implementation
 void Graph::build_dependencies(){
 
     edges_.clear();
@@ -61,4 +65,46 @@ const std::vector<int>& Graph::indegrees() const{
 }
 
 
+
+
+// Tpoloigical sort implementation
+std::vector<int> Graph::topological_sort() const {
+    
+    // Have been promised that this function will not change any inner value, therefore, we need to copy a indegree 
+    std::vector<int> indegree = indegrees_;
+    std::queue<int> ready;
+    std::vector<int> order;
+
+    // 1. Find all nodes which can be executed
+    for(int i = 0; i < static_cast<int>(nodes_.size()); i++){
+        if(indegree[i] == 0) ready.push(i);
+    }
+
+
+    // 2. Process ready nodes
+    while(!ready.empty()){
+        int current = ready.front();
+        ready.pop();
+        order.push_back(current);
+
+        // 3. remove every outgoing edge of current node.
+        for(int next : edges_[current]){
+            indegree[next] --;
+
+            if(indegree[next] == 0) ready.push(next);
+        }
+    }
+
+
+    // 4. Detect Cycle   
+    // 原理很简单，如果一个图没有环，那必定每个node都可以被加入输出集合中
+    if(order.size() != nodes_.size()){
+        throw std::runtime_error("graph contains a cycle.");
+    }
+
+
+    return order;
+
+
+}
 
