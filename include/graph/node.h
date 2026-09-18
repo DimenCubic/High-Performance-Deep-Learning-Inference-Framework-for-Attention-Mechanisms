@@ -24,8 +24,8 @@ class Node{
     private:
         std::string name_;
         std::string type_;
-        std::vector<std::string> inputs_;
-        std::vector<std::string> outputs_;
+        std::vector<std::string> inputs_;   // includes name of the tensor
+        std::vector<std::string> outputs_;  // includes name of the tensor
 };
 
 #endif

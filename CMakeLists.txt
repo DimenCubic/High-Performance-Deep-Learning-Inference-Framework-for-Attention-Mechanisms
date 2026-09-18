@@ -153,5 +153,17 @@ add_executable(
 )
 
 
+# For Graph basic test
+add_executable(
+    graph_test
+
+    tests/cpp/test_graph.cpp
+
+    src/tensor/tensor.cpp
+    src/graph/graph.cpp
+    src/graph/node.cpp
+)
+
+
 
 
