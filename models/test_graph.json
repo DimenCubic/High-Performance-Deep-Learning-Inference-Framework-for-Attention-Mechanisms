@@ -1,0 +1,31 @@
+{
+    "nodes":[
+        {
+            "name": "softmax",
+            "type": "Softmax",
+            "inputs": ["scores"],
+            "outputs": ["weights"]
+        },
+
+        {
+            "name": "attention_scores",
+            "type": "AttentionScores",
+            "inputs": ["Q", "K"],
+            "outputs": ["scores"]
+        },
+
+        {
+            "name": "k_projection",
+            "type": "MatMul",
+            "inputs": ["input", "W_k"],
+            "outputs": ["k"]
+        },
+
+        {
+            "name": "q_projection",
+            "type": "MatMul",
+            "inputs": ["input", "W_q"],
+            "outputs": ["Q"]
+        }
+    ]
+}

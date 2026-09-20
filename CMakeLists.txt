@@ -25,6 +25,12 @@ find_package(OpenMP REQUIRED)
 
 
 
+# nlohmann JSON
+find_package(nlohmann_json REQUIRED)
+
+
+
+
 
 # Make a variable OPT_LEVEL for CMake
 set(
@@ -165,5 +171,9 @@ add_executable(
 )
 
 
-
+target_link_libraries(
+    graph_test
+    PRIVATE
+    nlohmann_json::nlohmann_json
+)
 
