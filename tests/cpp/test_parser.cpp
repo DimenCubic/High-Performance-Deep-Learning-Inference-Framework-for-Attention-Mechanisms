@@ -3,7 +3,7 @@
 
 int main(){
     try{
-        Graph graph = GraphParser::parse("models/test_graph.json");
+        Graph graph = GraphParser::parse("models/tests/test_graph.json");
 
         std::cout << "Parsed nodes:" << std::endl;
         for(const Node& node : graph.nodes())
