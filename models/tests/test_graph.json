@@ -1,8 +1,8 @@
 {
     "nodes":[
         {
-            "name": "softmax",
-            "type": "Softmax",
+            "name": "attention_softmax",
+            "type": "AttentionSoftmax",
             "inputs": ["scores"],
             "outputs": ["weights"]
         },

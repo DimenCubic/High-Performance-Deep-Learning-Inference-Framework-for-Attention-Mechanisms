@@ -42,13 +42,12 @@ void Executor::run(const Graph& graph){
 
 // Next will be large execute node part.
 void Executor::execute_node(const Node& node){
-    if(node.type() == "Softmax")
+    if(node.type() == "AttentionSoftmax")
         execute_node_attention_softmax(node);
-    else if(node.type() == "nan" )
-        execute_node_test();
+    else  
+        throw std::runtime_error("Unsupported operator type: " + node.type());
 
 
-    throw std::runtime_error("Unsupported operator type: " + node.type());
 }
 
 
@@ -61,17 +60,24 @@ void Executor::execute_node_attention_softmax(const Node& node){
 
     if(input.size() != output.size())
         throw std::runtime_error("Softmax input/output size mismatch.");
+
+     if(input.shape().size() != 2)
+        throw std::runtime_error("Attention softmax must be square.");
+
+
+    if(input.shape()[0] != input.shape()[1])
+        throw std::runtime_error("Attention softmax input must be square.");
+
+   
+
+    int seq_len = input.shape()[0];
     
-    attention_softmax(input.data(), output.data(), static_cast<int>(input.size()));
-
-    return;
+    attention_softmax(input.data(), output.data(), static_cast<int>(seq_len));
 
 }
 
 
-void execute_node_test(){
-
-}
+ 
 
 
 
