@@ -7,7 +7,7 @@
 
 using json = nlohmann::json; // rename the official reference
 
-Graph GraphParser(const std::string& filename){
+Graph GraphParser::parse(const std::string& filename){
     std::ifstream file(filename);
 
     if(!file)

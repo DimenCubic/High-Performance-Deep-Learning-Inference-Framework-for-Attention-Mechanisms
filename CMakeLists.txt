@@ -177,3 +177,22 @@ target_link_libraries(
     nlohmann_json::nlohmann_json
 )
 
+
+
+# For Graph Parser test
+add_executable(
+    parser_test
+
+    tests/cpp/test_parser.cpp
+
+    src/tensor/tensor.cpp
+    src/graph/graph.cpp
+    src/graph/node.cpp
+    src/graph/parser.cpp
+)
+
+target_link_libraries(
+    parser_test
+    PRIVATE
+    nlohmann_json::nlohmann_json
+)
