@@ -51,9 +51,57 @@ void softmax_test(){
 
 }
 
+void test_executor_matmul(){
+    Graph graph = GraphParser::parse("models/tests/test_matmul_graph.json");
+
+    Tensor A("A", {3,4});
+    Tensor B("B", {4,2});
+    Tensor C("C", {3,2});
+
+    float A_data[] = {
+        1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 10, 11, 12
+    };
+
+    float B_data[] = {
+        1, 2,
+        3, 4,
+        5, 6,
+        7, 8
+    };
+
+    for(std::size_t i = 0; i < A.size(); i++)
+        A[i] = A_data[i];
+
+    for(std::size_t i = 0; i < B.size(); i++)
+        B[i] = B_data[i];
+
+    
+    Executor executor;
+    executor.add_tensor(A);
+    executor.add_tensor(B);
+    executor.add_tensor(C);
+
+    executor.run(graph);
+
+    const Tensor& result = executor.get_tensor("C");
+
+    std::cout << "MatMul result:" << std::endl;
+
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 2; j++)
+            std::cout << result[i * 2 + j] << " ";
+
+        std::cout << std::endl;
+    }
+
+}
+
 
 int main(){
-    softmax_test();
+    //softmax_test();
+    test_executor_matmul();
 
     return 0;
 }

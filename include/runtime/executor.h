@@ -27,6 +27,7 @@ class Executor{
 
         // sub function of the execute_node.
         void execute_node_attention_softmax(const Node& node);
+        void execute_matmul(const Node& node);
 
 };
 
