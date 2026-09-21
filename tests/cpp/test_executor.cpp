@@ -7,7 +7,7 @@
 
 
 
-void softmax_test(){
+void test_attention_softmax(){
     Graph graph = GraphParser::parse("models/tests/test_softmax_graph.json");
 
     Tensor input("scores", {3,3});
@@ -163,10 +163,169 @@ void test_executor_matmul_softmax(){
 }
 
 
+
+void test_executor_gelu()
+{
+    Graph graph =GraphParser::parse("models/tests/test_gelu_graph.json");
+
+    Tensor input("input",{5});
+    Tensor output("output",{5});
+
+
+    float input_data[] = {
+        -3.0f,
+        -1.0f,
+        0.0f,
+        1.0f,
+        3.0f
+    };
+
+
+    for(std::size_t i = 0; i < input.size(); i++)
+        input[i] = input_data[i];
+    
+
+
+    Executor executor;
+
+    executor.add_tensor(input);
+    executor.add_tensor(output);
+
+
+    executor.run(graph);
+
+
+    const Tensor& result = executor.get_tensor("output");
+
+
+    std::cout << "GELU result:" << std::endl;
+
+
+    for(std::size_t i = 0; i < result.size(); i++)
+        std::cout << result[i] << " ";
+    
+
+    std::cout << std::endl;
+}
+
+
+
+void test_executor_layernorm()
+{
+    Graph graph = GraphParser::parse("models/tests/test_layernorm_graph.json");
+
+
+    Tensor input("input",{4});
+    Tensor gamma("gamma", {4});
+    Tensor beta("beta",{4});
+    Tensor output("output",{4});
+
+
+    float input_data[] = {
+        1.0f,
+        2.0f,
+        3.0f,
+        4.0f
+    };
+
+
+    for(std::size_t i = 0; i < input.size(); i++)
+    {
+        input[i] = input_data[i];
+        gamma[i] = 1.0f;
+        beta[i] = 0.0f;
+    }
+
+
+    Executor executor;
+
+    executor.add_tensor(input);
+    executor.add_tensor(gamma);
+    executor.add_tensor(beta);
+    executor.add_tensor(output);
+
+
+    executor.run(graph);
+
+
+    const Tensor& result = executor.get_tensor( "output");
+
+
+    std::cout << "LayerNorm result:" << std::endl;
+
+
+    for(std::size_t i = 0; i < result.size(); i++)
+        std::cout << result[i] << " ";
+    
+
+    std::cout << std::endl;
+}
+
+
+
+void test_executor_attention_scores()
+{
+    Graph graph = GraphParser::parse("models/tests/test_attention_scores_graph.json");
+
+    Tensor Q("Q",{3, 2});
+    Tensor K("K", {3, 2});
+    Tensor scores("scores",{3, 3});
+
+
+    float Q_data[] = {
+        4, 6,
+        12, 14,
+        20, 22
+    };
+
+    float K_data[] = {
+        4, 7,
+        12, 19,
+        20, 31
+    };
+
+
+    for(std::size_t i = 0; i < Q.size(); i++)
+    {
+        Q[i] = Q_data[i];
+        K[i] = K_data[i];
+    }
+
+
+    Executor executor;
+
+    executor.add_tensor(Q);
+    executor.add_tensor(K);
+    executor.add_tensor(scores);
+
+
+    executor.run(graph);
+
+
+    const Tensor& result = executor.get_tensor("scores");
+
+
+    std::cout << "Attention Scores:" << std::endl;
+
+
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++)
+            std::cout << result[i * 3 + j] << " ";
+        
+        std::cout << std::endl;
+    }
+}
+
+
+
+
 int main(){
-    //softmax_test();
+    //test_attention_softmax();
     //test_executor_matmul();
-    test_executor_matmul_softmax();
+    //test_executor_matmul_softmax();
+    //test_executor_gelu();
+    //test_executor_layernorm();
+    test_executor_attention_scores();
 
     return 0;
 }

@@ -1,0 +1,10 @@
+{
+    "nodes": [
+      {
+        "name": "attention_scores",
+        "type": "AttentionScores",
+        "inputs": ["Q", "K"],
+        "outputs": ["scores"]
+      }
+    ]
+  }

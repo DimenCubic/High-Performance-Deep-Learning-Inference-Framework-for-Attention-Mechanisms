@@ -28,6 +28,9 @@ class Executor{
         // sub function of the execute_node.
         void execute_node_attention_softmax(const Node& node);
         void execute_matmul(const Node& node);
+        void execute_gelu(const Node& node);
+        void execute_layernorm(const Node& node);
+        void execute_attention_scores(const Node& node);
 
 };
 

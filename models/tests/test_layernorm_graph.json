@@ -1,0 +1,14 @@
+{
+    "nodes": [
+        {
+            "name": "layernorm",
+            "type": "LayerNorm",
+            "inputs": [
+                "input",
+                "gamma",
+                "beta"
+            ],
+            "outputs": ["output"]
+        }
+    ]
+}

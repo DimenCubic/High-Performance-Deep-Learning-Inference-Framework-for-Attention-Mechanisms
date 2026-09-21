@@ -54,11 +54,112 @@ void Executor::execute_node(const Node& node){
     }
     
     
+    if(node.type() == "GELU"){
+        execute_gelu(node);
+        return;
+    }
+    
+    
+    
+    if(node.type() == "LayerNorm"){
+        execute_layernorm(node);
+        return;
+    }
+
+
+    if(node.type() == "AttentionScores"){
+        execute_attention_scores(node);
+        return;
+    }
+    
     
     throw std::runtime_error("Unsupported operator type: " + node.type());
 
 
 }
+
+
+void Executor::execute_attention_scores(const Node& node){
+    if(node.inputs().size() != 2 || node.outputs().size() != 1)
+        throw std::runtime_error("AttentionScores expects 2 inputs and 1 output.");
+    
+
+    Tensor& Q = get_tensor(node.inputs()[0]);
+    Tensor& K = get_tensor(node.inputs()[1]);
+    Tensor& scores = get_tensor(node.outputs()[0]);
+
+
+    // Q and K must be 2D
+    if(Q.shape().size() != 2 || K.shape().size() != 2 || scores.shape().size() != 2)
+        throw std::runtime_error("AttentionScores requires 2D tensors.");
+    
+
+
+    int seq_len = Q.shape()[0];
+    int head_dim = Q.shape()[1];
+
+
+    // Q and K should have same shape
+    if(K.shape()[0] != seq_len || K.shape()[1] != head_dim)
+        throw std::runtime_error("Q and K shape mismatch.");
+    
+
+
+    // scores should be seq_len × seq_len
+    if(scores.shape()[0] != seq_len || scores.shape()[1] != seq_len)
+        throw std::runtime_error("Attention scores output shape mismatch.");
+    
+
+
+    attention_scores(
+        Q.data(),
+        K.data(),
+        scores.data(),
+        seq_len,
+        head_dim
+    );
+
+}
+
+
+
+void Executor::execute_layernorm(const Node& node){
+    if(node.inputs().size() != 3 || node.outputs().size() != 1)
+        throw std::runtime_error("LayerNorm expects input, gamma, beta and one output");
+
+    Tensor& input = get_tensor(node.inputs()[0]);
+    Tensor& gamma = get_tensor(node.inputs()[1]);
+    Tensor& beta = get_tensor(node.inputs()[2]);
+    Tensor& output = get_tensor(node.outputs()[0]);
+
+    if(input.size() != gamma.size() || input.size() != beta.size() || input.size() != output.size())
+        throw std::runtime_error("LayerNorm tensor size mismatch.");
+
+    constexpr float epsilon = 1e-5;  // constexpr means fix value on the compile state and never change later.
+
+    layer_norm(input.data(), gamma.data(), beta.data(), output.data(), static_cast<int>(input.size()), epsilon);
+
+}
+
+
+
+void Executor::execute_gelu(const Node& node){
+    if(node.inputs().size() != 1 || node.outputs().size() != 1)
+        throw std::runtime_error("GELU exoects 1 input and 1 output.");
+
+
+    Tensor& input = get_tensor(node.inputs()[0]);
+    Tensor& output = get_tensor(node.outputs()[0]);
+
+    
+    if(input.shape() != output.shape())
+        throw std::runtime_error("GRLU input and output mismatch.");
+
+    gelu(input.data(), output.data(), static_cast<int>(input.size()));
+}
+
+
+
 
 void Executor::execute_matmul(const Node& node){
     if(node.inputs().size() != 2 || node.outputs().size() != 1)

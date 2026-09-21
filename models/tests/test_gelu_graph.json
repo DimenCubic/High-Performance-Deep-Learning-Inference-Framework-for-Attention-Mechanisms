@@ -1,0 +1,10 @@
+{
+    "nodes": [
+        {
+            "name": "gelu",
+            "type": "GELU",
+            "inputs": ["input"],
+            "outputs": ["output"]
+        }
+    ]
+}
