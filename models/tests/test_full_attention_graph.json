@@ -1,0 +1,45 @@
+{
+    "nodes": [
+      {
+        "name": "attention_output",
+        "type": "MatMul",
+        "inputs": ["weights", "V"],
+        "outputs": ["output"]
+      },
+  
+      {
+        "name": "attention_softmax",
+        "type": "AttentionSoftmax",
+        "inputs": ["scores"],
+        "outputs": ["weights"]
+      },
+  
+      {
+        "name": "v_projection",
+        "type": "MatMul",
+        "inputs": ["X", "W_v"],
+        "outputs": ["V"]
+      },
+  
+      {
+        "name": "attention_scores",
+        "type": "AttentionScores",
+        "inputs": ["Q", "K"],
+        "outputs": ["scores"]
+      },
+  
+      {
+        "name": "k_projection",
+        "type": "MatMul",
+        "inputs": ["X", "W_k"],
+        "outputs": ["K"]
+      },
+  
+      {
+        "name": "q_projection",
+        "type": "MatMul",
+        "inputs": ["X", "W_q"],
+        "outputs": ["Q"]
+      }
+    ]
+  }

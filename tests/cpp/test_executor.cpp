@@ -318,6 +318,170 @@ void test_executor_attention_scores()
 
 
 
+void test_executor_full_attention()
+{
+    Graph graph = GraphParser::parse("models/tests/test_full_attention_graph.json");
+
+
+    Tensor X("X",{3, 4});
+    Tensor W_q("W_q",{4, 2});
+    Tensor W_k("W_k",{4, 2});
+    Tensor W_v("W_v",{4, 2});
+    Tensor Q( "Q", {3, 2});
+    Tensor K("K",{3, 2});
+    Tensor V( "V",{3, 2});
+    Tensor scores("scores",{3, 3});
+    Tensor weights("weights",{3, 3});
+    Tensor output("output",{3, 2});
+
+    float X_data[] = {
+        1, 0, 1, 0,
+        0, 1, 0, 1,
+        1, 1, 1, 1
+    };
+
+
+    float W_q_data[] = {
+        1, 0,
+        0, 1,
+        1, 0,
+        0, 1
+    };
+
+
+    float W_k_data[] = {
+        1, 0,
+        0, 1,
+        0, 1,
+        1, 0
+    };
+
+
+    float W_v_data[] = {
+        1, 0,
+        0, 1,
+        1, 1,
+        1, -1
+    };
+
+
+    for(std::size_t i = 0; i < X.size(); i++)
+        X[i] = X_data[i];
+    
+
+    for(std::size_t i = 0; i < W_q.size(); i++)
+    {
+        W_q[i] = W_q_data[i];
+        W_k[i] = W_k_data[i];
+        W_v[i] = W_v_data[i];
+    }
+
+
+    Executor executor;
+
+
+    executor.add_tensor(X);
+
+    executor.add_tensor(W_q);
+    executor.add_tensor(W_k);
+    executor.add_tensor(W_v);
+
+    executor.add_tensor(Q);
+    executor.add_tensor(K);
+    executor.add_tensor(V);
+
+    executor.add_tensor(scores);
+    executor.add_tensor(weights);
+
+    executor.add_tensor(output);
+
+
+    executor.run(graph);
+
+
+    const Tensor& Q_result = executor.get_tensor("Q");
+    const Tensor& K_result = executor.get_tensor("K");
+    const Tensor& V_result = executor.get_tensor("V");
+    const Tensor& score_result = executor.get_tensor("scores");
+    const Tensor& weight_result = executor.get_tensor("weights");
+    const Tensor& output_result = executor.get_tensor("output");
+
+
+    std::cout << "Q:" << std::endl;
+
+
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 2; j++)
+            std::cout << Q_result[i * 2 + j] << " ";
+        
+
+        std::cout << std::endl;
+    }
+
+
+    std::cout << std::endl << "K:" << std::endl;
+
+
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 2; j++)
+            std::cout << K_result[i * 2 + j] << " ";
+        
+
+        std::cout << std::endl;
+    }
+
+
+    std::cout << std::endl << "V:" << std::endl;
+
+
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 2; j++)
+            std::cout << V_result[i * 2 + j] << " ";
+        
+
+        std::cout << std::endl;
+    }
+
+
+    std::cout << std::endl << "Scores:" << std::endl;
+
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++)
+            std::cout << score_result[i * 3 + j] << " ";
+        
+
+        std::cout << std::endl;
+    }
+
+
+    std::cout << std::endl << "Weights:" << std::endl;
+
+    for(int i = 0; i < 3; i++){
+        float row_sum = 0.0f;
+
+        for(int j = 0; j < 3; j++) {
+            float value = weight_result[i * 3 + j];
+
+            std::cout << value << " ";
+            row_sum += value;
+        }
+
+        std::cout << "| sum = " << row_sum << std::endl;
+    }
+
+
+    std::cout << std::endl << "Output:" << std::endl;
+
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 2; j++)
+            std::cout << output_result[i * 2 + j] << " ";
+        
+
+        std::cout << std::endl;
+    }
+}
+
+
 
 int main(){
     //test_attention_softmax();
@@ -325,7 +489,8 @@ int main(){
     //test_executor_matmul_softmax();
     //test_executor_gelu();
     //test_executor_layernorm();
-    test_executor_attention_scores();
+    //test_executor_attention_scores();
+    test_executor_full_attention();
 
     return 0;
 }
