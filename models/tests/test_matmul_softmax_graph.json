@@ -1,0 +1,17 @@
+{
+    "nodes": [
+        {
+            "name": "attention_softmax",
+            "type": "AttentionSoftmax",
+            "inputs": ["scores"],
+            "outputs": ["weights"]
+        },
+
+        {
+            "name": "score_matmul",
+            "type": "MatMul",
+            "inputs": ["A", "B"],
+            "outputs": ["scores"]
+        }
+    ]
+}

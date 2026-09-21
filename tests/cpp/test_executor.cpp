@@ -99,9 +99,74 @@ void test_executor_matmul(){
 }
 
 
+// Combination of the matmul and attention softmax.
+void test_executor_matmul_softmax(){
+    Graph graph = GraphParser::parse("models/tests/test_matmul_softmax_graph.json");
+
+
+    Tensor A("A",{3, 2});
+    Tensor B("B",{2, 3});
+    Tensor scores("scores",{3, 3});
+    Tensor weights("weights",{3, 3});
+
+
+    float A_data[] = {
+        1, 0,
+        0, 1,
+        1, 1
+    };
+
+    float B_data[] = {
+        1, 2, 3,
+        4, 5, 6
+    };
+
+
+    for(std::size_t i = 0; i < A.size(); i++)
+        A[i] = A_data[i];
+    
+
+    for(std::size_t i = 0; i < B.size(); i++)
+         B[i] = B_data[i];
+
+
+    Executor executor;
+
+    executor.add_tensor(A);
+    executor.add_tensor(B);
+    executor.add_tensor(scores);
+    executor.add_tensor(weights);
+
+
+    executor.run(graph);
+
+
+    const Tensor& result = executor.get_tensor("weights");
+
+
+    std::cout << "Attention Softmax result:" << std::endl;
+
+
+    for(int i = 0; i < 3; i++)
+    {
+        float row_sum = 0.0f;
+
+        for(int j = 0; j < 3; j++)
+        {
+            float value = result[i * 3 + j]; 
+            std::cout << value << " ";
+            row_sum += value;
+        }
+
+        std::cout << "| sum = " << row_sum << std::endl;
+    }
+}
+
+
 int main(){
     //softmax_test();
-    test_executor_matmul();
+    //test_executor_matmul();
+    test_executor_matmul_softmax();
 
     return 0;
 }
