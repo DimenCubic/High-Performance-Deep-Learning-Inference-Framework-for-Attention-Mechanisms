@@ -4,6 +4,9 @@
 #include "graph/graph.h"
 #include "tensor/tensor.h"
 
+#include "runtime/memory_pool.h"
+#include "runtime/memory_planner.h"
+
 #include <string>
 #include <unordered_map>
 
@@ -12,6 +15,7 @@ class Executor{
     public:
 
         void add_tensor(const Tensor& tensor);
+        void register_tensor(const std::string& name, const std::vector<int>& shape);
 
         Tensor& get_tensor(const std::string& name);
         const Tensor& get_tensor(const std::string& name) const;
@@ -22,8 +26,14 @@ class Executor{
 
     private:
         std::unordered_map<std::string, Tensor> tensors_;
+        std::unordered_map<std::string, std::vector<int>> tensor_shapes_;
 
         void execute_node(const Node& node);
+
+        MemoryPool memory_pool_;
+        MemoryPlanner memory_planner_;
+        void allocate_tensor_if_needed(const std::string& name);
+        void release_tensor_if_dead(const std::string& name, int step);
 
         // sub function of the execute_node.
         void execute_node_attention_softmax(const Node& node);

@@ -4,7 +4,39 @@
 
 void Executor::add_tensor(const Tensor& tensor){
     tensors_.insert_or_assign(tensor.name(), tensor);  // C++ dunction for hash map instance.
+    tensor_shapes_.insert_or_assign(tensor.name(), tensor.shape());
 }
+
+void Executor::register_tensor(const std::string& name, const std::vector<int>& shape){
+    tensor_shapes_.insert_or_assign(name, shape);
+}
+
+
+void Executor::allocate_tensor_if_needed(const std::string& name){
+    // Already exists.
+    if(tensors_.find(name) != tensors_.end()) return;
+
+
+
+    auto shape_it = tensor_shapes_.find(name);
+    // This tensor not been registered.
+    if(shape_it == tensor_shapes_.end())
+        throw std::runtime_error("Tensor shape not registered: " + name);
+
+    const std::vector<int>& shape = shape_it -> second;
+
+    std::size_t size = 1;
+    for(int dim : shape)
+        size *= static_cast<std::size_t>(dim);
+
+
+
+    float* buffer = memory_pool_.allocate(size);
+    Tensor tensor(name, shape, buffer);
+    tensors_.insert_or_assign(name, tensor);
+    
+}
+
 
 
 Tensor& Executor::get_tensor(const std::string& name){
@@ -29,14 +61,66 @@ const Tensor& Executor::get_tensor(const std::string& name) const{
 
 
 
+
+
+
+// Running Helper
+void Executor::release_tensor_if_dead(const std::string& name, int step){
+    if(!memory_planner_.is_intermediate(name))
+        return;
+
+    const TensorLifetime& lifetime = memory_planner_.lifetime(name);
+
+    if(lifetime.last_use != step)
+        return;
+
+    
+    auto it = tensors_.find(name);
+    if(it == tensors_.end())
+        return;
+
+    
+    Tensor& tensor = it -> second;
+    if(tensor.owns_memory())
+        return;
+
+
+    memory_pool_.release(tensor.data());
+
+    // Delete this map in the hash maps.
+    tensors_.erase(it);
+
+}
+
+
+
+
+
 void Executor::run(const Graph& graph){
-    std::vector<int > order = graph.topological_sort();
+    memory_planner_.analyze(graph);
+    std::vector<int> order = graph.topological_sort();
 
-    for(int index : order){
-        const Node& node = graph.nodes()[index];
+    for(int step = 0; step < static_cast<int>(order.size()); step ++){
+        int node_index = order[step];
+        const Node& node = graph.nodes()[node_index];
 
+        // Allocate output tensors. (all inputs 肯定被处理好了)
+        for(const std::string& output : node.outputs())
+            allocate_tensor_if_needed(output);
+
+
+        // Execute operator
         execute_node(node);
-    };
+
+
+        
+        // Release dead input tensors
+        for(const std::string& input : node.inputs())
+            release_tensor_if_dead(input, step);
+
+
+
+    }
 }
 
 
