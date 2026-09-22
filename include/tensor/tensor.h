@@ -24,6 +24,14 @@ class Tensor{
 
 
 
+        // Copy onstructor
+        Tensor(const Tensor& other);
+        
+        // Copy Assignment Operator
+        Tensor& operator=(const Tensor& other);
+
+
+
 
         const std::string& name() const; // First const means 不允许通过这个函数提供的内部引用去修改内部的值，第二个const 指的是这个函数承诺不去修改内部值
         const std::vector<int>& shape() const; // 加上第一个const的最大原因也是

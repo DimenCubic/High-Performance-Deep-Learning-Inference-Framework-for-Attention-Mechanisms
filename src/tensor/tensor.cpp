@@ -49,6 +49,33 @@ name_(name), shape_(shape), size_(compute_size(shape)), data_(external_data){
 }
 
 
+// Copy Constructor: activated when use existed tensor to create new tensor.
+Tensor::Tensor(const Tensor& other) : name_(other.name_), shape_(other.shape_), size_(other.size_), ownered_data_(other.ownered_data_){
+    if(other.owns_memory())
+        data_ = ownered_data_.data();
+    else
+        data_ = other.data_;
+}
+
+
+// Copy Assignment Operator: two tensors all existed, we need to assign one's value to another
+Tensor& Tensor::operator=(const Tensor& other){
+    if(this == &other) return *this;   // self assign self
+
+    name_ = other.name_;
+    shape_ = other.shape_;
+    size_ = other.size_;
+    ownered_data_ = other.ownered_data_;
+
+    if(other.owns_memory())
+        data_ = ownered_data_.data();
+    else
+        data_ = other.data_;
+
+    return *this;
+}
+
+
 
 
 
