@@ -25,7 +25,7 @@ int main(){
     };
 
 
-
+/*
     for(const std::string& name :tensors){
         std::cout
             << name
@@ -38,7 +38,14 @@ int main(){
             << planner.is_intermediate(name)
             << std::endl;
     }
+*/
 
+    std::cout << std::boolalpha;
+
+    std::cout << "Q / K can reuse: " << planner.can_reuse("Q","K") << std::endl;
+    std::cout << "Q / scores can reuse: " << planner.can_reuse("Q","scores") << std::endl;
+    std::cout << "Q / weights can reuse: " << planner.can_reuse("Q", "weights") << std::endl;
+    std::cout << "scores / weights can reuse: " << planner.can_reuse("scores", "weights") << std::endl;
 
     return 0;
 }
