@@ -16,9 +16,16 @@ class MemoryPlanner{
 
         const std::unordered_map <std::string, int>& last_uses() const;
 
+        int birth(const std::string& tensor_name) const;
+
+        const std::unordered_map <std::string, int>& births() const;
+
+        bool is_intermediate(const std::string& tensor_name) const;
+
     
     private:
         std::unordered_map<std::string, int> last_use_;
+        std::unordered_map<std::string, int> birth_;
 };
 
 #endif
