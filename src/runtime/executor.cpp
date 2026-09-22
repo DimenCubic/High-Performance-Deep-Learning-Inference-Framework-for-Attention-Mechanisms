@@ -305,7 +305,14 @@ void Executor::execute_node_attention_softmax(const Node& node){
 
  
 
+// Two exposure tests interface
+std::size_t Executor::memory_block_count() const{
+    return memory_pool_.block_count();
+}
 
 
+std::size_t Executor::memory_capacity_count() const{
+    return memory_pool_.total_capacity();
+}
 
 

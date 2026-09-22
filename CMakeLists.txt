@@ -206,10 +206,14 @@ add_executable(
     
     src/tensor/tensor.cpp
 
+    src/runtime/executor.cpp
+    src/runtime/memory_planner.cpp
+    src/runtime/memory_pool.cpp
+
     src/graph/graph.cpp
     src/graph/node.cpp
     src/graph/parser.cpp
-    src/runtime/executor.cpp
+  
 
     src/ops/softmax.cpp
     src/ops/layernorm.cpp
@@ -244,6 +248,7 @@ add_executable(
     
     src/runtime/executor.cpp
     src/runtime/memory_planner.cpp
+    src/runtime/memory_pool.cpp
 
     src/ops/softmax.cpp
     src/ops/layernorm.cpp
@@ -294,6 +299,41 @@ add_executable(
 
 target_link_libraries(
     memory_pool_test
+    PRIVATE
+    nlohmann_json::nlohmann_json
+)
+
+
+
+
+# For full Memory Pool execute Test
+add_executable(
+    execute_memory_pool_test
+
+    tests/cpp/test_memory_aware_executor.cpp
+    
+    src/tensor/tensor.cpp
+
+    src/graph/graph.cpp
+    src/graph/node.cpp
+    src/graph/parser.cpp
+    
+    src/runtime/executor.cpp
+    src/runtime/memory_planner.cpp
+    src/runtime/memory_pool.cpp
+
+    src/ops/softmax.cpp
+    src/ops/layernorm.cpp
+    src/ops/gelu.cpp
+    src/ops/matmul.cpp
+    src/ops/qkv.cpp
+    src/ops/attention_scores.cpp
+    src/ops/attention_softmax.cpp
+    src/ops/scaled_dot_product_attention.cpp
+)
+
+target_link_libraries(
+    execute_memory_pool_test
     PRIVATE
     nlohmann_json::nlohmann_json
 )

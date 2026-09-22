@@ -23,6 +23,10 @@ class Executor{
         void run(const Graph& graph);
 
 
+        // For test, two exposure function
+        std::size_t memory_block_count() const;
+        std::size_t memory_capacity_count() const;
+
 
     private:
         std::unordered_map<std::string, Tensor> tensors_;
