@@ -1,7 +1,29 @@
 #include "tensor/tensor.h"
 #include <stdexcept>
 
-Tensor::Tensor(const std::string& name, const std::vector<int>& shape) : name_(name), shape_(shape){   // 定义Tensor类里面的Tensor构造函数，后面指的是创建这个Tensor对象的时候直接把name赋值给name_
+
+// Helper
+static std::size_t compute_size(const std::vector<int>& shape){
+    std::size_t total_size = 1;
+
+    for(int dim : shape){
+        if(dim <= 0)
+            throw std::invalid_argument("Dimension must be positive");
+
+        total_size *= static_cast<size_t>(dim);
+    }
+
+    return total_size;
+}
+
+
+
+
+
+
+
+Tensor::Tensor(const std::string& name, const std::vector<int>& shape) : name_(name), shape_(shape), size_(compute_size(shape)){   // 定义Tensor类里面的Tensor构造函数，后面指的是创建这个Tensor对象的时候直接把name赋值给name_
+    /*
     std::size_t total_size = 1;
 
     for(int dim : shape_){
@@ -12,11 +34,22 @@ Tensor::Tensor(const std::string& name, const std::vector<int>& shape) : name_(n
 
     
     }
+    */
 
-    data_.resize(total_size, 0.0f); // adjuct size of the data_, since data_ is vector<float>
-
-
+    ownered_data_.resize(size_, 0.0f); // adjuct size of the data_, since data_ is vector<float>
+    data_ = ownered_data_.data();
 }
+
+
+Tensor::Tensor(const std::string& name, const std::vector<int>& shape, float* external_data) :
+name_(name), shape_(shape), size_(compute_size(shape)), data_(external_data){
+
+    if(external_data == nullptr)
+        throw std::invalid_argument("Exeternal tensor data cannot be null.");
+}
+
+
+
 
 
 // Getter Function
@@ -30,17 +63,17 @@ const std::vector<int>& Tensor::shape() const{
 
 
 std::size_t Tensor::size() const{
-    return data_.size();
+    return size_;
 }
 
 
 // data()
 float* Tensor::data(){
-    return data_.data();   // 自带的一个函数，返回的是vector第一个element的指针。
+    return data_;   // 自带的一个函数，返回的是vector第一个element的指针。
 }
 
 const float* Tensor::data() const{
-    return data_.data();
+    return data_;
 }
 
 
@@ -53,3 +86,12 @@ float& Tensor::operator[](std::size_t index){
 const float& Tensor::operator[](std::size_t index) const{
     return data_[index];
 }
+
+
+
+// Owns memory judge
+bool Tensor::owns_memory()const{
+    return !ownered_data_.empty();
+}
+
+
