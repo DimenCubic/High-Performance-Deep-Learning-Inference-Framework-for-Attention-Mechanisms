@@ -78,6 +78,9 @@ bool MemoryPlanner::can_reuse(const std::string& tensor_a, const std::string& te
 
 
 
+const std::unordered_map<std::string, TensorLifetime>& MemoryPlanner::lifetimes() const{
+    return lifetimes_;
+}
 
 /*
 int MemoryPlanner::last_use(const std::string& tensor_name) const{
