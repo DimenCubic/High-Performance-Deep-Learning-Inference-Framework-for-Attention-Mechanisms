@@ -74,3 +74,42 @@ python tests/python/test_softmax_reference.py
 
 
 
+创建新的服务器实例的时候用。
+# 1. 检查 GPU / Driver
+nvidia-smi
+
+# 2. 先看看 nvcc 是否已经在 PATH
+which nvcc
+nvcc --version
+
+# 3. 如果 nvcc 找不到，检查 CUDA 安装目录
+ls /usr/local
+ls /usr/local/cuda*
+find /usr/local -name nvcc 2>/dev/null
+
+# 4. 临时加入 CUDA PATH
+export PATH=/usr/local/cuda/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+
+# 5. 永久写入 ~/.bashrc
+echo 'export PATH=/usr/local/cuda/bin:$PATH' >> ~/.bashrc
+echo 'export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
+
+# 6. 立即生效
+source ~/.bashrc
+
+# 7. 再次确认 CUDA compiler
+which nvcc
+nvcc --version
+
+# 8. 检查 Nsight 工具
+ncu --version
+nsys --version
+
+# 9. 检查 C++ / CMake / Git 环境
+g++ --version
+cmake --version
+git --version
+
+
+
