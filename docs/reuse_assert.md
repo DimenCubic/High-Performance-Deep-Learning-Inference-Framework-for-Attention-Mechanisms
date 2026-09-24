@@ -112,4 +112,8 @@ cmake --version
 git --version
 
 
+# git安装工具
+apt update
+apt install -y build-essential cmake git
+
 
