@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 project(
     HighPerformanceInference       # name
     VERSION 1.0
-    LANGUAGES CXX
+    LANGUAGES CXX CUDA
 )
 
  
@@ -11,7 +11,8 @@ project(
 set(CMAKE_CXX_STANDARD 17)          # using C++ 17 standard  == g++ -std=c++17
 set(CMAKE_CXX_STANDARD_REQUIRED ON) # Necessary C++ 17
 
-
+set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 
 
 # OpenMP on macOS
@@ -336,4 +337,25 @@ target_link_libraries(
     execute_memory_pool_test
     PRIVATE
     nlohmann_json::nlohmann_json
+)
+
+
+
+# Next is the part for the CUDA
+add_executable(
+    cuda_vector_add_test
+
+    tests/cuda/test_vector_add.cu
+    src/cuda/vector_add.cu
+)
+
+target_include_directories(
+    cuda_vector_add_test
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+set_property(
+    TARGET cuda_vector_add_test
+    PROPERTY CUDA_ARCHITECTURES 70   # Since V100S is Volta and compute capability 7.0, therefore let nvcc use sm_70 to compile.
 )
