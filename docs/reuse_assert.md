@@ -117,3 +117,7 @@ apt update
 apt install -y build-essential cmake git
 
 
+
+启动单独测试项
+cmake --build build --target cuda_vector_add_test
+./build/cuda_vector_add_test

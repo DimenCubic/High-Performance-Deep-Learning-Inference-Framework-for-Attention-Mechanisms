@@ -359,3 +359,23 @@ set_property(
     TARGET cuda_vector_add_test
     PROPERTY CUDA_ARCHITECTURES 70   # Since V100S is Volta and compute capability 7.0, therefore let nvcc use sm_70 to compile.
 )
+
+
+
+add_executable(
+    cuda_gemm_test
+
+    tests/cuda/test_cuda_gemm.cu
+    src/cuda/gemm_naive.cu
+)
+
+target_include_directories(
+    cuda_gemm_test
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+set_property(
+    TARGET cuda_gemm_test
+    PROPERTY CUDA_ARCHITECTURES 70   
+)
