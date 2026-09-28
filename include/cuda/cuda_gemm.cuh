@@ -16,4 +16,14 @@ void cuda_gemm_reordered(
     int N
 );
 
+
+void cuda_gemm_unrolled(
+    const float* A,
+    const float* B,
+    float* C,
+    int N
+);
+
+
+
 #endif
