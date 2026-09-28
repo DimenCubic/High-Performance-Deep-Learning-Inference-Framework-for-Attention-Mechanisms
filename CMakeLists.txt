@@ -362,6 +362,7 @@ set_property(
 
 
 
+# For cuda_gemm_test.
 add_executable(
     cuda_gemm_test
 
@@ -378,4 +379,25 @@ target_include_directories(
 set_property(
     TARGET cuda_gemm_test
     PROPERTY CUDA_ARCHITECTURES 70   
+)
+
+
+
+# For cuda_gemm_benchmark
+add_executable(
+    cuda_gemm_benchmark
+
+    benchmark/cuda/benchmark_cuda_gemm.cu
+    src/cuda/gemm_naive.cu
+)
+
+target_include_directories(
+    cuda_gemm_benchmark
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+set_property(
+    TARGET cuda_gemm_benchmark
+    PROPERTY CUDA_ARCHITECTURES 70
 )
