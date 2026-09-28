@@ -8,4 +8,12 @@ void cuda_gemm_naive(
     int N
 );
 
+
+void cuda_gemm_reordered(
+    const float* A,
+    const float* B,
+    float* C,
+    int N
+);
+
 #endif

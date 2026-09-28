@@ -42,7 +42,8 @@ int main(){
     cudaMemcpy(d_A, A.data(), bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, B.data(), bytes, cudaMemcpyHostToDevice);
 
-    cuda_gemm_naive(d_A, d_B, d_C, N);
+    //cuda_gemm_naive(d_A, d_B, d_C, N);
+    cuda_gemm_reordered(d_A, d_B, d_C, N);
     
     
     cudaDeviceSynchronize();
@@ -65,7 +66,7 @@ int main(){
     }
 
 
-    std::cout << "CUDA Naive GEMM: " << (correct ? "PASS" : "FAIL") << std::endl;
+    std::cout << "CUDA Test GEMM: " << (correct ? "PASS" : "FAIL") << std::endl;
 
 
     cudaFree(d_A);

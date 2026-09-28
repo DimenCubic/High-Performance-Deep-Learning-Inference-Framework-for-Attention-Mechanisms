@@ -60,7 +60,7 @@ int main(){
     double operations = static_cast<double>(N) * N *(2.0 * N - 1.0);
     double gflops = operations / average_secs / 1e9;
 
-    std::cout << "CUDA Naive GEMM Benchmark" << std::endl;
+    //std::cout << "CUDA Naive GEMM Benchmark" << std::endl;
     std::cout<< "Matrix size: " << N << " x" << N << std::endl;
     std::cout << "Warmup  runs: " << warmup_runs << std::endl;
     std::cout << "Benchmark runs: " << benchmark_runs << std::endl;
