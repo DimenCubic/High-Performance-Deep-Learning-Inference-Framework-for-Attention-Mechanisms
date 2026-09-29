@@ -15,4 +15,11 @@ void cuda_gelu(
     int size
 );
 
+
+void cuda_softmax(
+    const float* input,
+    float* output,
+    int size
+);
+
 #endif
