@@ -8,6 +8,11 @@
 #include <vector>
 
 
+
+
+
+
+
 void test_gelu(){
     const int size = 8;
     const float tolerance = 1e-5f;
