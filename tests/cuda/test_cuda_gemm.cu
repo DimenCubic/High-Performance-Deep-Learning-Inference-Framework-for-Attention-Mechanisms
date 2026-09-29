@@ -43,7 +43,8 @@ int main(){
     cudaMemcpy(d_B, B.data(), bytes, cudaMemcpyHostToDevice);
 
     //cuda_gemm_naive(d_A, d_B, d_C, N);
-    cuda_gemm_reordered(d_A, d_B, d_C, N);
+    //cuda_gemm_reordered(d_A, d_B, d_C, N);
+    cuda_gemm_unrolled(d_A, d_B, d_C, N);
     
     
     cudaDeviceSynchronize();

@@ -5,7 +5,7 @@
 #include <vector>
 
 int main(){
-    const int N = 1024;
+    const int N = 4096;
     const int warmup_runs = 10;
     const int benchmark_runs = 100;
 
@@ -27,8 +27,13 @@ int main(){
     cudaMemcpy(d_B, B.data(), bytes, cudaMemcpyHostToDevice);
 
     // Warmup
-    for(int i = 0; i < warmup_runs; i++)
-        cuda_gemm_naive(d_A, d_B, d_C, N);
+    for(int i = 0; i < warmup_runs; i++){
+        //cuda_gemm_naive(d_A, d_B, d_C, N);
+        //cuda_gemm_reordered(d_A, d_B, d_C, N);
+        cuda_gemm_unrolled(d_A, d_B, d_C, N);
+    }
+
+        
     
     cudaDeviceSynchronize();  // Finish all warm up before start record the time.
 
@@ -42,8 +47,12 @@ int main(){
 
     cudaEventRecord(start);  // 在GPU这个stream里面加入一个打点事件。
 
-    for(int i = 0; i < benchmark_runs; i++)
-        cuda_gemm_naive(d_A, d_B, d_C, N);
+    for(int i = 0; i < benchmark_runs; i++){
+        //cuda_gemm_naive(d_A, d_B, d_C, N);
+        //cuda_gemm_reordered(d_A, d_B, d_C, N);
+        cuda_gemm_unrolled(d_A, d_B, d_C, N);
+    }
+        
 
     cudaEventRecord(stop);  // Add another record spot. The place is on the end list of the benchmark kernels. 当GPU运行玩前面的所有实例后才会运行stop。
     cudaEventSynchronize(stop);  // 在执行下面的语句前等待全部执行完。

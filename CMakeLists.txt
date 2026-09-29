@@ -369,6 +369,7 @@ add_executable(
     tests/cuda/test_cuda_gemm.cu
     src/cuda/gemm/gemm_naive.cu
     src/cuda/gemm/gemm_reordered.cu
+    src/cuda/gemm/gemm_unrolled.cu
 )
 
 target_include_directories(
@@ -391,6 +392,7 @@ add_executable(
     benchmark/cuda/benchmark_cuda_gemm.cu
     src/cuda/gemm/gemm_naive.cu
     src/cuda/gemm/gemm_reordered.cu
+    src/cuda/gemm/gemm_unrolled.cu
 )
 
 target_include_directories(
