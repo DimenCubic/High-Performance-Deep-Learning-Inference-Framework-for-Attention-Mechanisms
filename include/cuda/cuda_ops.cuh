@@ -8,4 +8,11 @@ void cuda_vector_add(
     int N
 );
 
+
+void cuda_gelu(
+    const float* input,
+    float* output,
+    int size
+);
+
 #endif

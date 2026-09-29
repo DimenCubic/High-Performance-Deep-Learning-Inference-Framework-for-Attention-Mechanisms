@@ -405,3 +405,32 @@ set_property(
     TARGET cuda_gemm_benchmark
     PROPERTY CUDA_ARCHITECTURES 70
 )
+
+
+
+# For cuda_ops_test
+add_executable(
+    cuda_ops_test
+
+    tests/cuda/test_cuda_ops.cu
+
+    src/ops/gelu.cpp
+    src/ops/layernorm.cpp
+    src/ops/softmax.cpp
+
+    src/cuda/ops/gelu.cu
+    src/cuda/ops/layernorm.cu
+    src/cuda/ops/softmax.cu 
+)
+
+target_include_directories(
+    cuda_ops_test
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+set_property(
+    TARGET cuda_ops_test
+    PROPERTY CUDA_ARCHITECTURES 70
+)
+
