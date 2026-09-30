@@ -22,4 +22,13 @@ void cuda_softmax(
     int size
 );
 
+void cuda_layer_norm(
+    const float* input,
+    const float* gamma,
+    const float* beta,
+    float* output,
+    int size,
+    float epsilon
+);
+
 #endif

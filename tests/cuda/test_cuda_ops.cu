@@ -9,6 +9,101 @@
 
 
 
+void test_layer_norm(){
+    const int size = 513;
+    const float epsilon = 1e-5f;
+    const float tolerance = 1e-5f;
+
+    std::vector<float> input(size);
+    std::vector<float> gamma(size);
+    std::vector<float> beta(size);
+
+    for(int i = 0; i < size; i++){
+        input[i] = static_cast<float>((i % 23) -11) * 0.25f;
+        gamma[i] = 1.0f + static_cast<float>(i % 7) * 0.01f;
+        beta[i] = static_cast<float>((i % 5) - 2) * 0.02f;
+    }
+
+    std::vector<float> cpu_output(size);
+    std::vector<float> gpu_output(size);
+
+
+    // CPU Reference
+    layer_norm(input.data(), gamma.data(), beta.data(), cpu_output.data(), size, epsilon);
+
+
+    // GPU Reference
+    const std::size_t bytes = static_cast<std::size_t>(size) * sizeof(float);
+
+    float* d_input = nullptr;
+    float* d_gamma = nullptr;
+    float* d_beta = nullptr;
+    float* d_output = nullptr;
+
+    cudaMalloc(&d_input, bytes);
+    cudaMalloc(&d_gamma, bytes);
+    cudaMalloc(&d_output, bytes);
+    cudaMalloc(&d_beta, bytes);
+
+    cudaMemcpy(d_input, input.data(), bytes, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_output, gpu_output.data(), bytes, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_gamma, gamma.data(), bytes, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_beta, beta.data(), bytes, cudaMemcpyHostToDevice);
+
+
+    cuda_layer_norm(d_input, d_gamma, d_beta, d_output, size, epsilon);
+    cudaDeviceSynchronize(); // Wait finish all GPU before push CPU.
+
+    cudaMemcpy(gpu_output.data(), d_output, bytes, cudaMemcpyDeviceToHost);
+
+
+
+    // Compare
+    bool correct = true;
+    float max_diff = 0.0f;
+    int max_diff_index = -1;
+
+    for(int i = 0; i < size; i++){
+        const float diff = std::fabs(cpu_output[i] - gpu_output[i]);
+
+        if(diff > max_diff){
+            max_diff = diff;
+            max_diff_index = i;
+        }
+            
+
+        if(diff > tolerance)
+            correct  = false;
+    }
+
+
+
+    // Display
+    std::cout << "Max difference: " << max_diff << std::endl;
+    std::cout << "Max difference index: " << max_diff_index << std::endl;
+
+
+    if(!correct){
+        std::cout  << "CPU: " << cpu_output[max_diff_index] << std::endl;
+        std::cout  << "GPU: " << gpu_output[max_diff_index] << std::endl;
+    }
+
+
+    std::cout << "CUDA LayerNorm: " << (correct ? "PASS" : "FAIL") << std::endl;
+
+    
+    cudaFree(d_input);
+    cudaFree(d_gamma);
+    cudaFree(d_beta);
+    cudaFree(d_output);
+
+}
+
+
+
+
+
+
 void test_softmax(){
     const int size = 513;
     const float tolerance = 1e-5f;
@@ -146,7 +241,8 @@ void test_gelu(){
 
 int main(){
     //test_gelu();
-    test_softmax();
+    //test_softmax();
+    test_layer_norm();
 
 
     return 0;
