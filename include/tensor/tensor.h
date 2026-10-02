@@ -5,10 +5,21 @@
 #include <vector>
 #include <cstddef>
 
+
+
+// For better extension and maintaince.
+enum class DeviceType{
+    CPU, 
+    CUDA
+};
+
+
+
 class Tensor{
     public:
 
         // Constructor, got the read only reference from outside.
+        // If we use this constructor, then the data will be located at CPU, therefore no devicetype added here to keep Phase 3 non-revise.(we will detrmine the devicetype drfault)
         Tensor(  
             const std::string& name,
             const std::vector<int>& shape
@@ -19,7 +30,8 @@ class Tensor{
         Tensor(
             const std::string& name,
             const std::vector<int>& shape,
-            float* external_data
+            float* external_data,
+            DeviceType device = DeviceType::CPU
         );
 
 
@@ -48,6 +60,11 @@ class Tensor{
 
         bool owns_memory() const;
 
+        
+        
+        DeviceType device() const;
+   
+
 
     private:
 
@@ -58,6 +75,8 @@ class Tensor{
         // 把之前所有的data全部指向allocate这一部分
         std::size_t size_ = 0;
         float* data_ = nullptr;
+
+        DeviceType device_ = DeviceType::CPU;
 
 };
 

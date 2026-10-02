@@ -41,8 +41,8 @@ Tensor::Tensor(const std::string& name, const std::vector<int>& shape) : name_(n
 }
 
 
-Tensor::Tensor(const std::string& name, const std::vector<int>& shape, float* external_data) :
-name_(name), shape_(shape), size_(compute_size(shape)), data_(external_data){
+Tensor::Tensor(const std::string& name, const std::vector<int>& shape, float* external_data, DeviceType device) :
+name_(name), shape_(shape), size_(compute_size(shape)), data_(external_data), device_(device){
 
     if(external_data == nullptr)
         throw std::invalid_argument("Exeternal tensor data cannot be null.");
@@ -50,7 +50,7 @@ name_(name), shape_(shape), size_(compute_size(shape)), data_(external_data){
 
 
 // Copy Constructor: activated when use existed tensor to create new tensor.
-Tensor::Tensor(const Tensor& other) : name_(other.name_), shape_(other.shape_), size_(other.size_), ownered_data_(other.ownered_data_){
+Tensor::Tensor(const Tensor& other) : name_(other.name_), shape_(other.shape_), size_(other.size_), ownered_data_(other.ownered_data_), device_(other.device_){
     if(other.owns_memory())
         data_ = ownered_data_.data();
     else
@@ -66,6 +66,7 @@ Tensor& Tensor::operator=(const Tensor& other){
     shape_ = other.shape_;
     size_ = other.size_;
     ownered_data_ = other.ownered_data_;
+    device_ = other.device_;
 
     if(other.owns_memory())
         data_ = ownered_data_.data();
@@ -94,6 +95,12 @@ std::size_t Tensor::size() const{
 }
 
 
+DeviceType Tensor::device() const{
+    return device_;
+}
+
+
+
 // data()
 float* Tensor::data(){
     return data_;   // 自带的一个函数，返回的是vector第一个element的指针。
@@ -105,12 +112,20 @@ const float* Tensor::data() const{
 
 
 // operator
+// 如果Data指向的是GPU的数据内存，是不能直接通过data_[]来进行访问的。
 float& Tensor::operator[](std::size_t index){
+    if(device() == DeviceType::CUDA)
+        throw std::runtime_error("Cannot directly index CUDA tensor from GPU");
+    
+    
     return data_[index];
 }
 
 
 const float& Tensor::operator[](std::size_t index) const{
+    if(device() == DeviceType::CUDA)
+        throw std::runtime_error("cannot directly index CUDA tensor from GPU");
+    
     return data_[index];
 }
 
@@ -121,4 +136,4 @@ bool Tensor::owns_memory()const{
     return !ownered_data_.empty();
 }
 
-
+ 
