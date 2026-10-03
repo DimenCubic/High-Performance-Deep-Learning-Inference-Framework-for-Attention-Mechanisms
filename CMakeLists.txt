@@ -437,7 +437,7 @@ set_property(
 
 
 
-# For cuda_ops_test
+# For cuda_memory_pool_test
 add_executable(
     cuda_memory_pool_test
 
@@ -446,7 +446,7 @@ add_executable(
     src/ops/gelu.cpp
     src/ops/layernorm.cpp
     src/ops/softmax.cpp
-    
+
     src/runtime/cuda_memory_pool.cu
 
     src/cuda/ops/gelu.cu
@@ -456,12 +456,46 @@ add_executable(
 )
 
 target_include_directories(
-    cuda_ops_test
+    cuda_memory_pool_test
     PRIVATE
     ${CMAKE_SOURCE_DIR}/include
 )
 
 set_property(
-    TARGET cuda_ops_test
+    TARGET cuda_memory_pool_test
+    PROPERTY CUDA_ARCHITECTURES 70
+)
+
+
+
+# For device_transfer_test
+add_executable(
+    device_transfer_test
+
+    tests/cuda/test_device_transfer.cu
+
+    src/ops/gelu.cpp
+    src/ops/layernorm.cpp
+    src/ops/softmax.cpp
+
+    src/tensor/tensor.cpp
+
+    src/runtime/cuda_memory_pool.cu
+    src/runtime/device_transfer.cu
+
+    src/cuda/ops/gelu.cu
+    src/cuda/ops/layernorm.cu
+    src/cuda/ops/softmax.cu 
+
+)
+
+target_include_directories(
+    device_transfer_test
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+set_property(
+    TARGET device_transfer_test
     PROPERTY CUDA_ARCHITECTURES 70
 )

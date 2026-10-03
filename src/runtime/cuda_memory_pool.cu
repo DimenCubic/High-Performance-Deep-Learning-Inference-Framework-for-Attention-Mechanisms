@@ -33,7 +33,7 @@ float* CudaMemoryPool::allocate(std::size_t size){
 
 
 
-// Release Operation
+// Release Operation * this is only release (not destroy) one block"
 void CudaMemoryPool::release(float* ptr){
     if(ptr == nullptr)
         throw std::invalid_argument("cannot release null pointer");
