@@ -60,6 +60,7 @@ void Executor::allocate_tensor_if_needed(const std::string& name){
 
 
 
+// Tensor& 相当于创建一个名字，进行引用，而不是直接复制一份
 Tensor& Executor::get_tensor(const std::string& name){
     auto it = tensors_.find(name);  // If directly use tensor_[name] at here, if name doesn't exists, map will create an empty instance immediately.
 
