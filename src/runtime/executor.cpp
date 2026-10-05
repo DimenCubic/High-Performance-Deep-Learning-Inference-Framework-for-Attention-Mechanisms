@@ -1,14 +1,17 @@
 #include "runtime/executor.h"
 #include "ops/operator.h"
+#include "cuda/cuda_ops.cuh"
 #include <stdexcept>
 
 void Executor::add_tensor(const Tensor& tensor){
     tensors_.insert_or_assign(tensor.name(), tensor);  // C++ dunction for hash map instance.
     tensor_shapes_.insert_or_assign(tensor.name(), tensor.shape());
+    tensor_devices_.insert_or_assign(tensor.name(), tensor.device());
 }
 
-void Executor::register_tensor(const std::string& name, const std::vector<int>& shape){
+void Executor::register_tensor(const std::string& name, const std::vector<int>& shape, DeviceType device){
     tensor_shapes_.insert_or_assign(name, shape);
+    tensor_devices_.insert_or_assign(name, device);
 }
 
 
@@ -23,7 +26,17 @@ void Executor::allocate_tensor_if_needed(const std::string& name){
     if(shape_it == tensor_shapes_.end())
         throw std::runtime_error("Tensor shape not registered: " + name);
 
+
+    
+    // Add location judge.
+    auto device_it = tensor_devices_.find(name);
+    if(device_it == tensor_devices_.end())
+        throw std::runtime_error("Tensor device not registered: " + name);
+
+
     const std::vector<int>& shape = shape_it -> second;
+    const DeviceType device = device_it -> second;
+
 
     std::size_t size = 1;
     for(int dim : shape)
@@ -31,9 +44,17 @@ void Executor::allocate_tensor_if_needed(const std::string& name){
 
 
 
-    float* buffer = memory_pool_.allocate(size);
-    Tensor tensor(name, shape, buffer);
+    // Starts allocation.
+    float* buffer =  nullptr;
+
+    if(device == DeviceType::CPU)
+        buffer = memory_pool_.allocate(size);
+    else
+        buffer = cuda_memory_pool_.allocate(size);
+
+    Tensor tensor(name, shape, buffer, device);
     tensors_.insert_or_assign(name, tensor);
+     
     
 }
 
@@ -85,7 +106,13 @@ void Executor::release_tensor_if_dead(const std::string& name, int step){
         return;
 
 
-    memory_pool_.release(tensor.data());
+    if(tensor.device() == DeviceType::CPU)
+        memory_pool_.release(tensor.data());
+    else
+        cuda_memory_pool_.release(tensor.data());
+
+
+
 
     // Delete this map in the hash maps.
     tensors_.erase(it);
@@ -219,6 +246,11 @@ void Executor::execute_layernorm(const Node& node){
     if(input.size() != gamma.size() || input.size() != beta.size() || input.size() != output.size())
         throw std::runtime_error("LayerNorm tensor size mismatch.");
 
+    if(input.device() != gamma.device() || input.device() != beta.device() || input.device() != output.device())
+        throw std::runtime_error("LayerNorm tensors must be on the same device.");
+
+
+
     constexpr float epsilon = 1e-5;  // constexpr means fix value on the compile state and never change later.
 
     layer_norm(input.data(), gamma.data(), beta.data(), output.data(), static_cast<int>(input.size()), epsilon);
@@ -239,7 +271,15 @@ void Executor::execute_gelu(const Node& node){
     if(input.shape() != output.shape())
         throw std::runtime_error("GRLU input and output mismatch.");
 
-    gelu(input.data(), output.data(), static_cast<int>(input.size()));
+    if(input.device() != output.device())
+        throw std::runtime_error("GELU input and output must be on the same device");
+
+
+    if(input.device() == DeviceType::CPU)
+        gelu(input.data(), output.data(), static_cast<int>(input.size()));
+    else
+        cuda_gelu(input.data(), output.data(), static_cast<int>(input.size()));
+     
 }
 
 

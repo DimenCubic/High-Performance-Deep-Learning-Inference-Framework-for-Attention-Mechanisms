@@ -29,10 +29,10 @@ void copy_host_to_device(const Tensor& host, Tensor& device){
 
 void copy_device_to_host(const Tensor& device, Tensor& host){
     if(host.device() != DeviceType::CPU)
-        throw std::runtime_error("Source tensor must be on CPU");
+        throw std::runtime_error("Source tensor must be on GPU");
 
     if(device.device() != DeviceType::CUDA)
-        throw std::runtime_error("Destination tensor must be on GPU");
+        throw std::runtime_error("Destination tensor must be on CPU");
 
 
     if(host.shape() != device.shape())
