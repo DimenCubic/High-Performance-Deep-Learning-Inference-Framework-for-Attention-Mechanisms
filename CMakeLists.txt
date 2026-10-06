@@ -499,3 +499,49 @@ set_property(
     TARGET device_transfer_test
     PROPERTY CUDA_ARCHITECTURES 70
 )
+
+
+
+# cuda_executor_gelu_test
+add_executable(
+    cuda_executor_gelu_test
+
+    tests/cuda/executor/test_cuda_executor_gelu.cu
+
+    src/tensor/tensor.cpp
+
+    src/graph/node.cpp
+    src/graph/graph.cpp
+
+    src/runtime/executor.cpp
+    src/runtime/memory_pool.cpp
+    src/runtime/memory_planner.cpp
+    src/runtime/cuda_memory_pool.cu
+    src/runtime/device_transfer.cu
+
+    src/ops/gelu.cpp
+    src/ops/layernorm.cpp
+    src/ops/softmax.cpp
+    src/ops/matmul.cpp
+    src/ops/qkv.cpp
+    src/ops/attention_scores.cpp
+    src/ops/attention_softmax.cpp
+    src/ops/scaled_dot_product_attention.cpp
+
+    src/cuda/ops/gelu.cu
+    src/cuda/ops/layernorm.cu
+    src/cuda/ops/softmax.cu
+)
+
+
+target_include_directories(
+    cuda_executor_gelu_test
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+
+set_property(
+    TARGET cuda_executor_gelu_test
+    PROPERTY CUDA_ARCHITECTURES 70
+)

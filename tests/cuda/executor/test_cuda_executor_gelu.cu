@@ -87,6 +87,54 @@ int main(){
 
 
     // Obtain CUDA output tensor
-    Tensor& device_output = executor.get_tensor()
+    Tensor& device_output = executor.get_tensor("output_gpu");
+
+    if(device_output.device() != DeviceType::CUDA){
+        std::cerr << "Output Tensor is not on CUDA" << std::endl;
+
+        input_cuda_pool.release(input_device_buffer);
+
+        return 1;
+    }
+
+
+    // D2H
+    Tensor host_output("host_output", shape);
+    copy_device_to_host(device_output, host_output);
+
+
+
+
+
+    // Compare CPU and GPU results
+    bool correct = true;
+    float max_diff = 0.0f;
+    int max_diff_index = -1;
+
+    for(int i = 0; i < size; i++){
+        const float diff = std::fabs(cpu_reference[static_cast<std::size_t>(i)] - host_output[static_cast<std::size_t>(i)]);
+
+        if(diff > max_diff){
+            max_diff = diff;
+            max_diff_index = i;
+        }
+
+        if(diff > tolerance)
+            correct = false;
+        
+    }
+
+
+    // Print result;
+    std::cout << "Output Device: " << (device_output.device() == DeviceType::CUDA ? "CUDA" : "CPU") << std::endl;
+    std::cout << "Max difference index: " << max_diff_index << std::endl;
+    std::cout << "CUDA Executor GELU: " << (correct ? "PASS" : "FAIL") << std::endl;
+
+
+
+    // Release external input CUDA memory.
+    input_cuda_pool.release(input_device_buffer);
+
+    return correct ? 0 : 1;
 
 }
