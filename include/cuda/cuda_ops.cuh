@@ -31,4 +31,14 @@ void cuda_layer_norm(
     float epsilon
 );
 
+
+void cuda_matmul(
+    const float* A,
+    const float* B,
+    float* C,
+    int M,
+    int K,
+    int N
+);
+
 #endif
