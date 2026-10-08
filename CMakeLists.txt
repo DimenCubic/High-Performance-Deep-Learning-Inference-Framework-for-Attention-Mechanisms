@@ -594,3 +594,52 @@ set_property(
     TARGET cuda_matmul_test
     PROPERTY CUDA_ARCHITECTURES 70
 )
+
+
+
+
+# cuda_attention_scores_test
+add_executable(
+    cuda_attention_scores_test
+
+    tests/cuda/test_cuda_attention_scores.cu
+
+    src/tensor/tensor.cpp
+
+    src/graph/node.cpp
+    src/graph/graph.cpp
+
+    src/runtime/executor.cpp
+    src/runtime/memory_pool.cpp
+    src/runtime/memory_planner.cpp
+    src/runtime/cuda_memory_pool.cu
+    src/runtime/device_transfer.cu
+
+    src/ops/gelu.cpp
+    src/ops/layernorm.cpp
+    src/ops/softmax.cpp
+    src/ops/matmul.cpp
+    src/ops/qkv.cpp
+    src/ops/attention_scores.cpp
+    src/ops/attention_softmax.cpp
+    src/ops/scaled_dot_product_attention.cpp
+
+    src/cuda/ops/gelu.cu
+    src/cuda/ops/layernorm.cu
+    src/cuda/ops/softmax.cu
+    src/cuda/ops/matmul.cu
+    src/cuda/ops/attention_scores.cu
+)
+
+
+target_include_directories(
+    cuda_attention_scores_test
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+
+set_property(
+    TARGET cuda_attention_scores_test
+    PROPERTY CUDA_ARCHITECTURES 70
+)
