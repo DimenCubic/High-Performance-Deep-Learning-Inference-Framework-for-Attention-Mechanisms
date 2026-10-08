@@ -473,6 +473,317 @@ bool test_executor_attention_softmax()
 }
 
 
+
+
+// ==================================================
+// Test 4:
+// End-to-End CUDA Scaled Dot-Product Attention
+//
+// Q, K, V
+//    |
+//    v
+// AttentionScores
+//    |
+//    v
+// AttentionSoftmax
+//    |
+//    v
+// MatMul(weights, V)
+//    |
+//    v
+// output
+// ==================================================
+
+bool test_executor_attention_end_to_end()
+{
+    constexpr int seq_len = 4;
+    constexpr int head_dim = 3;
+
+    constexpr float tolerance = 1e-5f;
+
+    // ==================================================
+    // Step 1: Create CPU input tensors.
+    // ==================================================
+
+    Tensor Q = make_cpu_tensor(
+        "Q",
+        {seq_len, head_dim},
+        {
+            1.0f, 0.5f, 0.2f,
+            0.3f, 1.0f, 0.4f,
+            0.6f, 0.2f, 1.0f,
+            1.0f, 0.8f, 0.5f
+        }
+    );
+
+    Tensor K = make_cpu_tensor(
+        "K",
+        {seq_len, head_dim},
+        {
+            0.8f, 0.2f, 0.5f,
+            0.1f, 1.0f, 0.3f,
+            0.5f, 0.4f, 0.9f,
+            0.9f, 0.6f, 0.2f
+        }
+    );
+
+    Tensor V = make_cpu_tensor(
+        "V",
+        {seq_len, head_dim},
+        {
+            1.0f, 2.0f, 3.0f,
+            4.0f, 5.0f, 6.0f,
+            7.0f, 8.0f, 9.0f,
+            10.0f, 11.0f, 12.0f
+        }
+    );
+
+
+    // ==================================================
+    // Step 2: Calculate CPU reference.
+    // ==================================================
+
+    Tensor expected(
+        "expected",
+        {seq_len, head_dim}
+    );
+
+    scaled_dot_product_attention(
+        Q.data(),
+        K.data(),
+        V.data(),
+        expected.data(),
+        seq_len,
+        head_dim
+    );
+
+
+    // ==================================================
+    // Step 3: Create CUDA test context.
+    // ==================================================
+
+    GpuTestContext context;
+
+    context.add_input(Q);
+    context.add_input(K);
+    context.add_input(V);
+
+
+    // ==================================================
+    // Step 4: Register CUDA output tensors.
+    //
+    // Intermediate:
+    // scores, weights
+    //
+    // Final:
+    // output
+    // ==================================================
+
+    context.executor.register_tensor(
+        "scores",
+        {seq_len, seq_len},
+        DeviceType::CUDA
+    );
+
+    context.executor.register_tensor(
+        "weights",
+        {seq_len, seq_len},
+        DeviceType::CUDA
+    );
+
+    context.executor.register_tensor(
+        "output",
+        {seq_len, head_dim},
+        DeviceType::CUDA
+    );
+
+
+    // ==================================================
+    // Step 5: Build computation graph.
+    // ==================================================
+
+    Graph graph;
+
+
+    // scores = QK^T / sqrt(head_dim) + causal mask
+    graph.add_node(
+        Node(
+            "attention_scores_node",
+            "AttentionScores",
+            {"Q", "K"},
+            {"scores"}
+        )
+    );
+
+
+    // weights = softmax(scores)
+    graph.add_node(
+        Node(
+            "attention_softmax_node",
+            "AttentionSoftmax",
+            {"scores"},
+            {"weights"}
+        )
+    );
+
+
+    // output = weights * V
+    graph.add_node(
+        Node(
+            "attention_output_node",
+            "MatMul",
+            {"weights", "V"},
+            {"output"}
+        )
+    );
+
+
+    // Build producer-consumer dependencies.
+    graph.build_dependencies();
+
+
+    // ==================================================
+    // Step 6: Validate execution order.
+    // ==================================================
+
+    const std::vector<int> order =
+        graph.topological_sort();
+
+    std::cout
+        << "Graph execution order:"
+        << std::endl;
+
+    for(int node_index : order)
+    {
+        std::cout
+            << "  "
+            << graph.nodes()[node_index].name()
+            << std::endl;
+    }
+
+
+    // ==================================================
+    // Step 7: Execute full attention graph on GPU.
+    // ==================================================
+
+    context.executor.run(graph);
+
+
+    // Check kernel launch errors.
+    check_cuda(
+        cudaGetLastError(),
+        "End-to-End Attention kernel launch"
+    );
+
+
+    // Wait for all CUDA kernels to finish.
+    check_cuda(
+        cudaDeviceSynchronize(),
+        "End-to-End Attention synchronization"
+    );
+
+
+    // ==================================================
+    // Step 8: Obtain final CUDA output.
+    // ==================================================
+
+    Tensor& device_output =
+        context.executor.get_tensor("output");
+
+
+    if(device_output.device() != DeviceType::CUDA)
+    {
+        throw std::runtime_error(
+            "Attention output is not on CUDA."
+        );
+    }
+
+
+    // ==================================================
+    // Step 9: D2H transfer.
+    // ==================================================
+
+    Tensor actual(
+        "actual",
+        {seq_len, head_dim}
+    );
+
+    copy_device_to_host(
+        device_output,
+        actual
+    );
+
+
+    // ==================================================
+    // Step 10: Compare CPU and CUDA outputs.
+    // ==================================================
+
+    const bool correct =
+        compare_tensors(
+            actual,
+            expected,
+            tolerance
+        );
+
+
+    // ==================================================
+    // Step 11: Print outputs.
+    // ==================================================
+
+    std::cout
+        << "\nCPU Attention Output:"
+        << std::endl;
+
+    for(int row = 0; row < seq_len; row++)
+    {
+        for(int col = 0; col < head_dim; col++)
+        {
+            std::cout
+                << expected[row * head_dim + col]
+                << " ";
+        }
+
+        std::cout << std::endl;
+    }
+
+
+    std::cout
+        << "\nCUDA Attention Output:"
+        << std::endl;
+
+    for(int row = 0; row < seq_len; row++)
+    {
+        for(int col = 0; col < head_dim; col++)
+        {
+            std::cout
+                << actual[row * head_dim + col]
+                << " ";
+        }
+
+        std::cout << std::endl;
+    }
+
+
+    // ==================================================
+    // Step 12: Final result.
+    // ==================================================
+
+    std::cout
+        << "\nEnd-to-End CUDA Attention: "
+        << (correct ? "PASS" : "FAIL")
+        << std::endl;
+
+
+    return correct;
+}
+
+
+
+
+
+
+
+
 // ==================================================
 // Main
 // ==================================================
@@ -490,6 +801,8 @@ int main()
         const bool softmax_ok =
             test_executor_attention_softmax();
 
+        const bool attention_ok = test_executor_attention_end_to_end();
+
         std::cout
             << "CUDA Executor MatMul: "
             << (matmul_ok ? "PASS" : "FAIL")
@@ -505,10 +818,16 @@ int main()
             << (softmax_ok ? "PASS" : "FAIL")
             << "\n";
 
+        std::cout
+            << "CUDA Executor End-to-End Attention: "
+            << (attention_ok ? "PASS" : "FAIL")
+            << "\n";
+
         return (
             matmul_ok &&
             scores_ok &&
-            softmax_ok
+            softmax_ok &&
+            attention_ok
         ) ? 0 : 1;
     }
     catch(const std::exception& e)
