@@ -222,7 +222,7 @@ void Executor::execute_attention_scores(const Node& node){
         throw std::runtime_error("Attention scores output shape mismatch.");
     
 
-
+    /*
     attention_scores(
         Q.data(),
         K.data(),
@@ -230,6 +230,16 @@ void Executor::execute_attention_scores(const Node& node){
         seq_len,
         head_dim
     );
+    */
+
+    if(Q.device() != K.device() || Q.device() != scores.device())
+        throw std::runtime_error("AttentionScores Tensors must be on the same device.");
+
+    
+    if(Q.device() == DeviceType::CPU)
+        attention_scores(Q.data(), K.data(), scores.data(), seq_len, head_dim);
+    else
+        cuda_attention_scores(Q.data(), K.data(), scores.data(), seq_len, head_dim);
 
 }
 
@@ -254,7 +264,12 @@ void Executor::execute_layernorm(const Node& node){
 
     constexpr float epsilon = 1e-5;  // constexpr means fix value on the compile state and never change later.
 
-    layer_norm(input.data(), gamma.data(), beta.data(), output.data(), static_cast<int>(input.size()), epsilon);
+    //layer_norm(input.data(), gamma.data(), beta.data(), output.data(), static_cast<int>(input.size()), epsilon);
+
+    if(input.device() == DeviceType::CPU)
+        layer_norm(input.data(), gamma.data(), beta.data(), output.data(), static_cast<int>(input.size()), epsilon);
+    else
+        cuda_layer_norm(input.data(), gamma.data(), beta.data(), output.data(), static_cast<int>(input.size()), epsilon);
 
 }
 
@@ -312,7 +327,16 @@ void Executor::execute_matmul(const Node& node){
     if(C.shape()[0] != M || C.shape()[1] != N)
         throw std::runtime_error("matmul output shape mismatch");
 
-    matmul(A.data(), B.data(), C.data(), M, K, N);
+    //matmul(A.data(), B.data(), C.data(), M, K, N);
+
+    if(A.device() != B.device() || A.device() != C.device())
+        throw std::runtime_error("Matmul tensors must be on the same device.");
+
+    if(A.device() == DeviceType::CPU)
+        matmul(A.data(), B.data(), C.data(), M, K, N);
+    else
+        cuda_matmul(A.data(), B.data(), C.data(), M, K , N);
+    
 }
 
 
@@ -328,7 +352,10 @@ void Executor::execute_node_attention_softmax(const Node& node){
     if(input.size() != output.size())
         throw std::runtime_error("Softmax input/output size mismatch.");
 
-     if(input.shape().size() != 2)
+    if(input.shape() != output.shape())
+        throw std::runtime_error("Softmax input/output shape mismatch.");
+
+    if(input.shape().size() != 2)
         throw std::runtime_error("Attention softmax must be square.");
 
 
@@ -339,8 +366,15 @@ void Executor::execute_node_attention_softmax(const Node& node){
 
     int seq_len = input.shape()[0];
     
-    attention_softmax(input.data(), output.data(), static_cast<int>(seq_len));
+    //attention_softmax(input.data(), output.data(), static_cast<int>(seq_len));
 
+    if(input.device() != output.device())
+        throw std::runtime_error("Attention Softmax Tensors must be on the same device.");
+
+    if(input.device() == DeviceType::CPU)
+        attention_softmax(input.data(), output.data(), seq_len);
+    else
+        cuda_attention_softmax(input.data(), output.data(), seq_len);
 }
 
 
