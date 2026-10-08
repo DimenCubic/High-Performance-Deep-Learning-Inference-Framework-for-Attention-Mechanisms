@@ -50,4 +50,11 @@ void cuda_attention_scores(
     int head_dim
 );
 
+
+void cuda_attention_softmax(
+    const float* scores,
+    float* weights,
+    int seq_len
+);
+
 #endif
