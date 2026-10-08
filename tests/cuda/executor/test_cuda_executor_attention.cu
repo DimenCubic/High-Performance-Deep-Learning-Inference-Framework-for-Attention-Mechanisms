@@ -148,14 +148,14 @@ class GpuTestContext
 public:
     GpuTestContext() = default;
 
-    GpuTestContext(const GpuTestContext&) = delete;
-    GpuTestContext& operator=(const GpuTestContext&) = delete;
+    GpuTestContext(const GpuTestContext&) = delete;   // Meaning forbid using existed instance to create another instance. Have double free risk
+    GpuTestContext& operator=(const GpuTestContext&) = delete;   // 同样禁止通过等号进行复制构造
 
     ~GpuTestContext()
     {
         // Ensure launched kernels have finished before
         // the external input pool is destroyed.
-        cudaDeviceSynchronize();
+        cudaDeviceSynchronize();   // 等待当前设备之前提交的CUDA工作全部完成
     }
 
     void add_input(const Tensor& host)
@@ -254,7 +254,7 @@ bool test_executor_matmul()
     );
 
     check_cuda(
-        cudaDeviceSynchronize(),
+        cudaDeviceSynchronize(),   // 保证GPU所有的线程也完成了
         "MatMul synchronization"
     );
 

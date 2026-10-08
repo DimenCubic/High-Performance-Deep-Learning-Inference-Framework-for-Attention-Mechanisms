@@ -693,3 +693,75 @@ set_property(
     TARGET cuda_attention_softmax_test
     PROPERTY CUDA_ARCHITECTURES 70
 )
+
+
+# We can create some libraries on the CMake
+add_library(
+    cuda_backend STATIC   # 和 Shared对应，一般用于插件，共享组件等的研发，多个程序可以使用同一个库。
+
+    src/runtime/cuda_memory_pool.cu
+    src/runtime/device_transfer.cu
+
+    src/cuda/ops/gelu.cu
+    src/cuda/ops/layernorm.cu
+    src/cuda/ops/softmax.cu
+    src/cuda/ops/matmul.cu
+    src/cuda/ops/attention_scores.cu
+    src/cuda/ops/attention_softmax.cu
+)
+
+target_include_directories(
+    cuda_backend
+    PUBLIC         # PUBLIC  PRIVATE   INTERFACE  规定了谁会使用这些头文件
+    ${CMAKE_SOURCE_DIR}/include 
+)
+
+set_property(
+    TARGET cuda_backend
+    PROPERTY CUDA_ARCHITECTURES 70
+)
+
+
+
+# CUDA Executor Attention Tests
+add_executable(
+    cuda_executor_attention_test
+
+    tests/cuda/executor/test_cuda_executor_attention.cu
+
+    src/tensor/tensor.cpp
+
+    src/graph/node.cpp
+    src/graph/graph.cpp
+
+    src/runtime/executor.cpp
+    src/runtime/memory_pool.cpp
+    src/runtime/memory_planner.cpp
+
+    src/ops/gelu.cpp
+    src/ops/layernorm.cpp
+    src/ops/softmax.cpp
+    src/ops/matmul.cpp
+    src/ops/qkv.cpp
+    src/ops/attention_scores.cpp
+    src/ops/attention_softmax.cpp
+    src/ops/scaled_dot_product_attention.cpp
+)
+
+target_include_directories(
+    cuda_executor_attention_test
+    PRIVATE    # 这里如果当前文件只是一个中转站，那么PUBLIC就可以让后面的文件链接到这个依赖，现在是没有区别的，因为现在就是终点。
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+target_link_libraries(
+    cuda_executor_attention_test
+    PRIVATE
+    cuda_backend
+)
+
+
+set_property(
+    TARGET cuda_executor_attention_test
+    PROPERTY CUDA_ARCHITECTURES 70
+)
