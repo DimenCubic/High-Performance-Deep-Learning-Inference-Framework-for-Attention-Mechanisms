@@ -149,14 +149,14 @@ add_executable(
     tests/cpp/test_ops.cpp
     #tests/cpp/test_ops_temp.cpp
 
-    src/ops/attention/softmax.cpp
-    src/ops/attention/layernorm.cpp
-    src/ops/attention/gelu.cpp
-    src/ops/attention/matmul.cpp
-    src/ops/attention/qkv.cpp
-    src/ops/attention/attention_scores.cpp
-    src/ops/attention/attention_softmax.cpp
-    src/ops/attention/scaled_dot_product_attention.cpp
+    src/ops/softmax.cpp
+    src/ops/layernorm.cpp
+    src/ops/gelu.cpp
+    src/ops/matmul.cpp
+    src/ops/qkv.cpp
+    src/ops/attention_scores.cpp
+    src/ops/attention_softmax.cpp
+    src/ops/scaled_dot_product_attention.cpp
 )
 
 
@@ -216,14 +216,14 @@ add_executable(
     src/graph/parser.cpp
   
 
-    src/ops/attention/softmax.cpp
-    src/ops/attention/layernorm.cpp
-    src/ops/attention/gelu.cpp
-    src/ops/attention/matmul.cpp
-    src/ops/attention/qkv.cpp
-    src/ops/attention/attention_scores.cpp
-    src/ops/attention/attention_softmax.cpp
-    src/ops/attention/scaled_dot_product_attention.cpp
+    src/ops/softmax.cpp
+    src/ops/layernorm.cpp
+    src/ops/gelu.cpp
+    src/ops/matmul.cpp
+    src/ops/qkv.cpp
+    src/ops/attention_scores.cpp
+    src/ops/attention_softmax.cpp
+    src/ops/scaled_dot_product_attention.cpp
 )
 
 target_link_libraries(
@@ -251,14 +251,14 @@ add_executable(
     src/runtime/memory_planner.cpp
     src/runtime/memory_pool.cpp
 
-    src/ops/attention/softmax.cpp
-    src/ops/attention/layernorm.cpp
-    src/ops/attention/gelu.cpp
-    src/ops/attention/matmul.cpp
-    src/ops/attention/qkv.cpp
-    src/ops/attention/attention_scores.cpp
-    src/ops/attention/attention_softmax.cpp
-    src/ops/attention/scaled_dot_product_attention.cpp
+    src/ops/softmax.cpp
+    src/ops/layernorm.cpp
+    src/ops/gelu.cpp
+    src/ops/matmul.cpp
+    src/ops/qkv.cpp
+    src/ops/attention_scores.cpp
+    src/ops/attention_softmax.cpp
+    src/ops/scaled_dot_product_attention.cpp
 )
 
 target_link_libraries(
@@ -288,14 +288,14 @@ add_executable(
     src/runtime/memory_planner.cpp
     src/runtime/memory_pool.cpp
 
-    src/ops/attention/softmax.cpp
-    src/ops/attention/layernorm.cpp
-    src/ops/attention/gelu.cpp
-    src/ops/attention/matmul.cpp
-    src/ops/attention/qkv.cpp
-    src/ops/attention/attention_scores.cpp
-    src/ops/attention/attention_softmax.cpp
-    src/ops/attention/scaled_dot_product_attention.cpp
+    src/ops/softmax.cpp
+    src/ops/layernorm.cpp
+    src/ops/gelu.cpp
+    src/ops/matmul.cpp
+    src/ops/qkv.cpp
+    src/ops/attention_scores.cpp
+    src/ops/attention_softmax.cpp
+    src/ops/scaled_dot_product_attention.cpp
 )
 
 target_link_libraries(
@@ -323,14 +323,14 @@ add_executable(
     src/runtime/memory_planner.cpp
     src/runtime/memory_pool.cpp
 
-    src/ops/attention/softmax.cpp
-    src/ops/attention/layernorm.cpp
-    src/ops/attention/gelu.cpp
-    src/ops/attention/matmul.cpp
-    src/ops/attention/qkv.cpp
-    src/ops/attention/attention_scores.cpp
-    src/ops/attention/attention_softmax.cpp
-    src/ops/attention/scaled_dot_product_attention.cpp
+    src/ops/softmax.cpp
+    src/ops/layernorm.cpp
+    src/ops/gelu.cpp
+    src/ops/matmul.cpp
+    src/ops/qkv.cpp
+    src/ops/attention_scores.cpp
+    src/ops/attention_softmax.cpp
+    src/ops/scaled_dot_product_attention.cpp
 )
 
 target_link_libraries(
@@ -414,9 +414,9 @@ add_executable(
 
     tests/cuda/test_cuda_ops.cu
 
-    src/ops/attention/gelu.cpp
-    src/ops/attention/layernorm.cpp
-    src/ops/attention/softmax.cpp
+    src/ops/gelu.cpp
+    src/ops/layernorm.cpp
+    src/ops/softmax.cpp
 
     src/cuda/ops/gelu.cu
     src/cuda/ops/layernorm.cu
@@ -443,9 +443,9 @@ add_executable(
 
     tests/cuda/test_cuda_memory_pool.cu
 
-    src/ops/attention/gelu.cpp
-    src/ops/attention/layernorm.cpp
-    src/ops/attention/softmax.cpp
+    src/ops/gelu.cpp
+    src/ops/layernorm.cpp
+    src/ops/softmax.cpp
 
     src/runtime/cuda_memory_pool.cu
 
@@ -474,9 +474,9 @@ add_executable(
 
     tests/cuda/test_device_transfer.cu
 
-    src/ops/attention/gelu.cpp
-    src/ops/attention/layernorm.cpp
-    src/ops/attention/softmax.cpp
+    src/ops/gelu.cpp
+    src/ops/layernorm.cpp
+    src/ops/softmax.cpp
 
     src/tensor/tensor.cpp
 
@@ -519,14 +519,14 @@ add_executable(
     src/runtime/cuda_memory_pool.cu
     src/runtime/device_transfer.cu
 
-    src/ops/attention/gelu.cpp
-    src/ops/attention/layernorm.cpp
-    src/ops/attention/softmax.cpp
-    src/ops/attention/matmul.cpp
-    src/ops/attention/qkv.cpp
-    src/ops/attention/attention_scores.cpp
-    src/ops/attention/attention_softmax.cpp
-    src/ops/attention/scaled_dot_product_attention.cpp
+    src/ops/gelu.cpp
+    src/ops/layernorm.cpp
+    src/ops/softmax.cpp
+    src/ops/matmul.cpp
+    src/ops/qkv.cpp
+    src/ops/attention_scores.cpp
+    src/ops/attention_softmax.cpp
+    src/ops/scaled_dot_product_attention.cpp
 
     src/cuda/ops/gelu.cu
     src/cuda/ops/layernorm.cu
@@ -567,14 +567,14 @@ add_executable(
     src/runtime/cuda_memory_pool.cu
     src/runtime/device_transfer.cu
 
-    src/ops/attention/gelu.cpp
-    src/ops/attention/layernorm.cpp
-    src/ops/attention/softmax.cpp
-    src/ops/attention/matmul.cpp
-    src/ops/attention/qkv.cpp
-    src/ops/attention/attention_scores.cpp
-    src/ops/attention/attention_softmax.cpp
-    src/ops/attention/scaled_dot_product_attention.cpp
+    src/ops/gelu.cpp
+    src/ops/layernorm.cpp
+    src/ops/softmax.cpp
+    src/ops/matmul.cpp
+    src/ops/qkv.cpp
+    src/ops/attention_scores.cpp
+    src/ops/attention_softmax.cpp
+    src/ops/scaled_dot_product_attention.cpp
 
     src/cuda/ops/gelu.cu
     src/cuda/ops/layernorm.cu
@@ -615,14 +615,14 @@ add_executable(
     src/runtime/cuda_memory_pool.cu
     src/runtime/device_transfer.cu
 
-    src/ops/attention/gelu.cpp
-    src/ops/attention/layernorm.cpp
-    src/ops/attention/softmax.cpp
-    src/ops/attention/matmul.cpp
-    src/ops/attention/qkv.cpp
-    src/ops/attention/attention_scores.cpp
-    src/ops/attention/attention_softmax.cpp
-    src/ops/attention/scaled_dot_product_attention.cpp
+    src/ops/gelu.cpp
+    src/ops/layernorm.cpp
+    src/ops/softmax.cpp
+    src/ops/matmul.cpp
+    src/ops/qkv.cpp
+    src/ops/attention_scores.cpp
+    src/ops/attention_softmax.cpp
+    src/ops/scaled_dot_product_attention.cpp
 
     src/cuda/ops/gelu.cu
     src/cuda/ops/layernorm.cu
@@ -664,14 +664,14 @@ add_executable(
     src/runtime/cuda_memory_pool.cu
     src/runtime/device_transfer.cu
 
-    src/ops/attention/gelu.cpp
-    src/ops/attention/layernorm.cpp
-    src/ops/attention/softmax.cpp
-    src/ops/attention/matmul.cpp
-    src/ops/attention/qkv.cpp
-    src/ops/attention/attention_scores.cpp
-    src/ops/attention/attention_softmax.cpp
-    src/ops/attention/scaled_dot_product_attention.cpp
+    src/ops/gelu.cpp
+    src/ops/layernorm.cpp
+    src/ops/softmax.cpp
+    src/ops/matmul.cpp
+    src/ops/qkv.cpp
+    src/ops/attention_scores.cpp
+    src/ops/attention_softmax.cpp
+    src/ops/scaled_dot_product_attention.cpp
 
     src/cuda/ops/gelu.cu
     src/cuda/ops/layernorm.cu
@@ -738,14 +738,14 @@ add_executable(
     src/runtime/memory_pool.cpp
     src/runtime/memory_planner.cpp
 
-    src/ops/attention/gelu.cpp
-    src/ops/attention/layernorm.cpp
-    src/ops/attention/softmax.cpp
-    src/ops/attention/matmul.cpp
-    src/ops/attention/qkv.cpp
-    src/ops/attention/attention_scores.cpp
-    src/ops/attention/attention_softmax.cpp
-    src/ops/attention/scaled_dot_product_attention.cpp
+    src/ops/gelu.cpp
+    src/ops/layernorm.cpp
+    src/ops/softmax.cpp
+    src/ops/matmul.cpp
+    src/ops/qkv.cpp
+    src/ops/attention_scores.cpp
+    src/ops/attention_softmax.cpp
+    src/ops/scaled_dot_product_attention.cpp
 )
 
 target_include_directories(
@@ -780,7 +780,7 @@ add_executable(
 
     src/ops/operator_registry.cpp
     src/ops/cpu/gelu_operator.cpp
-    src/ops/attention/gelu.cpp
+    src/ops/gelu.cpp
 )
 
 target_include_directories(
