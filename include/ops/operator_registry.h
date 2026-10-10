@@ -39,6 +39,10 @@ class OperatorRegistry{
 
 
 
+        // Helper, register build-in operators at one time.
+        void register_builtin_operators();
+
+
 
     private:
 

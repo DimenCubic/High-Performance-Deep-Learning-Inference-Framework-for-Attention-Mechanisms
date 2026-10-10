@@ -55,3 +55,5 @@ bool OperatorRegistry::contains(const std::string& type, DeviceType device) cons
 
     return factories_.find(key) != factories_.end();
 }
+
+
