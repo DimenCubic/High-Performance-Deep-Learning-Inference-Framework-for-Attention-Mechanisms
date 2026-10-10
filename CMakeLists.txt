@@ -765,3 +765,31 @@ set_property(
     TARGET cuda_executor_attention_test
     PROPERTY CUDA_ARCHITECTURES 70
 )
+
+
+
+
+
+# Operator Registry Test
+add_executable(
+    operator_registry_test
+
+    tests/cpp/test_operator_registry.cpp
+
+    src/tensor/tensor.cpp
+
+    src/ops/operator_registry.cpp
+    src/ops/cpu/gelu_operator.cpp
+    src/ops/gelu.cpp
+)
+
+target_include_directories(
+    operator_registry_test
+    PRIVATE     
+    ${CMAKE_SOURCE_DIR}/include
+)
+ 
+set_property(
+    TARGET cuda_executor_attention_test
+    PROPERTY CUDA_ARCHITECTURES 70
+)
